@@ -1,0 +1,124 @@
+#!/usr/bin/env python
+#
+
+from argparse                           import ArgumentParser, RawDescriptionHelpFormatter
+from logging                            import basicConfig, DEBUG, WARNING
+import yaml
+
+from mapi.log                           import Clog, center, cleave, cdebug
+from mapi.client                        import MAASClient
+
+# App
+#
+class App():
+    '''
+    '''
+
+    # __init__
+    #
+    def __init__(s, args):
+        s.args = args
+        s.url   = 'http://%s/MAAS/api/1.0' % s.args.cfg['maas']['ip']
+        s.creds = s.args.cfg['maas']['creds']
+
+    # main
+    #
+    def main(s):
+        center('App::main')
+        retval = 1
+        try:
+            mc = MAASClient(s.url, s.creds)
+
+            nodegroups = mc.nodegroups
+            # __len__()
+            cdebug('    len(nodegroups): %d' % len(nodegroups))
+
+            # __iter__()
+            for group in nodegroups:
+                cdebug('    cluster name: \'%s\'' % group.cluster_name)
+
+            # __getitem__()
+            cdebug('    cluster name: \'%s\'' % nodegroups[0].cluster_name)
+
+            # good #s.maas = RestClient(s.url, s.creds)
+
+            # good ## nodegroups  ---
+            # good ##
+            # good #response = s.maas._get(u'/nodegroups/', op='list')
+            # good #nodegroups = response.data                   # A list of all of the nodegroups defined on the MAAS server
+
+            # good ## On the MAAS server I'm talking to I only have 1 nodegroup
+            # good ##
+            # good #uuid = nodegroups[0]['uuid']
+
+            # good ## nodegroups interfaces ---
+            # good #_url = u'/nodegroups/%s/interfaces/' % uuid
+            # good #response = s.maas._get(_url, op='list')
+            # good #interfaces = response.data
+
+            # good ## nodegroups - power types ---
+            # good #_url = u'/nodegroups/'
+            # good #response = s.maas._get(_url, op='describe_power_types')
+            # good #interfaces = response.data
+
+            # good ## nodes ---
+            # good #_url = u'/nodes/'
+            # good #response = s.maas._get(_url, op='list')
+            # good #interfaces = response.data
+
+            retval = 0
+
+        # Handle the user presses <ctrl-C>.
+        #
+        except KeyboardInterrupt:
+            print("Aborting ...")
+
+        cleave('App::main')
+        return retval
+
+if __name__ == '__main__':
+    app_description = '''
+    '''
+
+    app_epilog = '''
+    '''
+
+    parser = ArgumentParser(description=app_description, epilog=app_epilog, formatter_class=RawDescriptionHelpFormatter)
+    parser.add_argument('config',  type=str, nargs=1,                     help='The configuration information for the MAAS server.')
+    parser.add_argument('--debug', action='store_true', default=False,    help='Print out lots of stuff.')
+    parser.add_argument('--nc',    action='store_true', default=False,    help='Debut output should not be colored.')
+
+    args = parser.parse_args()
+
+    cfg = yaml.safe_load(file(args.config[0]))
+    setattr(args, 'cfg', cfg)
+    if args.debug:
+        level = DEBUG
+        Clog.dbg = True
+        Clog.color = not args.nc
+
+    else:
+        level = WARNING
+
+    basicConfig(level=level, format="%(levelname)s - %(message)s")
+
+    cdebug('args:')
+    for k in vars(args):
+        if k == 'cfg':
+            cfg = getattr(args, 'cfg')
+            cdebug('    cfg:')
+            for c in cfg:
+                if type(cfg[c]) is dict:
+                    cdebug('        %s:' % (c))
+                    for x in cfg[c]:
+                        cdebug('            %s: %s' % (x, cfg[c][x]))
+                else:
+                    cdebug('        %s: %s' % (c, cfg[c]))
+        else:
+            cdebug('    %s: %s' % (k, getattr(args, k)))
+
+    app = App(args)
+    exit(app.main())
+
+# vi:set ts=4 sw=4 expandtab syntax=python:
+
