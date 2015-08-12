@@ -3,6 +3,7 @@
 
 from log                                import center, cleave, cdebug
 from nodegroup                          import Nodegroup
+from error                              import MapiError
 
 # Nodegroups
 #
@@ -48,7 +49,11 @@ class Nodegroups(object):
         center('Nodegroups.__fetch_if_needed')
         if s.__nodegroups is None:
             response = s.__maas._get(u'/nodegroups/', op='list')
+            if not response.ok:
+                if type(response.data) == str:
+                    cleave('Nodegroups.__fetch_if_needed')
+                    raise MapiError(response.data)
+
             s.__nodegroups = response.data
             cdebug('    fetched')
         cleave('Nodegroups.__fetch_if_needed')
-
