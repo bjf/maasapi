@@ -5,20 +5,20 @@ from log                                import center, cleave, cdebug
 from restclient                         import RestClient
 from nodegroups                         import Nodegroups
 
-# MAASClient
+# MapiClient
 #
-class MAASClient(object):
+class MapiClient(object):
     '''
     '''
 
     def __init__(s, url, creds):
-        center('MAASClient.__init__')
+        center('MapiClient.__init__')
         cdebug('      url: %s' % url)
         cdebug('    creds: %s' % creds)
 
         s.maas = RestClient(url, creds)
 
-        cleave('MAASClient.__init__')
+        cleave('MapiClient.__init__')
 
     @property
     def nodegroups(s):

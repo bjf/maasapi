@@ -6,7 +6,8 @@ from logging                            import basicConfig, DEBUG, WARNING
 import yaml
 
 from mapi.log                           import Clog, center, cleave, cdebug
-from mapi.client                        import MAASClient
+from mapi.client                        import MapiClient
+from mapi.error                         import MapiError
 
 # App
 #
@@ -27,7 +28,7 @@ class App():
         center('App::main')
         retval = 1
         try:
-            mc = MAASClient(s.url, s.creds)
+            mc = MapiClient(s.url, s.creds)
 
             nodegroups = mc.nodegroups
             # __len__()
@@ -40,33 +41,14 @@ class App():
             # __getitem__()
             cdebug('    cluster name: \'%s\'' % nodegroups[0].cluster_name)
 
-            # good #s.maas = RestClient(s.url, s.creds)
+            interfaces = nodegroups[0].interfaces
 
-            # good ## nodegroups  ---
-            # good ##
-            # good #response = s.maas._get(u'/nodegroups/', op='list')
-            # good #nodegroups = response.data                   # A list of all of the nodegroups defined on the MAAS server
-
-            # good ## On the MAAS server I'm talking to I only have 1 nodegroup
-            # good ##
-            # good #uuid = nodegroups[0]['uuid']
-
-            # good ## nodegroups interfaces ---
-            # good #_url = u'/nodegroups/%s/interfaces/' % uuid
-            # good #response = s.maas._get(_url, op='list')
-            # good #interfaces = response.data
-
-            # good ## nodegroups - power types ---
-            # good #_url = u'/nodegroups/'
-            # good #response = s.maas._get(_url, op='describe_power_types')
-            # good #interfaces = response.data
-
-            # good ## nodes ---
-            # good #_url = u'/nodes/'
-            # good #response = s.maas._get(_url, op='list')
-            # good #interfaces = response.data
+            power = nodegroups.power_types
 
             retval = 0
+
+        except MapiError as e:
+            print(e.reason)
 
         # Handle the user presses <ctrl-C>.
         #
