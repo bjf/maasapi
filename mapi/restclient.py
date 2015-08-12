@@ -4,10 +4,11 @@
 
 import json
 import logging
-from urllib2                            import HTTPError
+from urllib2                            import HTTPError, URLError
 
 from apiclient                          import maas_client as maas
-from mapi.response                      import Response
+from response                           import Response
+from log                                import center, cleave, cdebug
 
 log = logging.getLogger('mapi')
 OK = 200
@@ -32,10 +33,12 @@ class RestClient():
 
         :rtype: MAASClient
         """
+        center('RestClient.client')
         if not self._client:
             self._client = maas.MAASClient(auth=self.oauth,
                                            dispatcher=maas.MAASDispatcher(),
                                            base_url=self.api_url)
+        cleave('RestClient.client (%s)' % self._client)
         return self._client
 
     @property
@@ -45,12 +48,14 @@ class RestClient():
 
         :rtype: MAASOAuth
         """
+        center('RestClient.oauth')
         if not self._oauth:
             if self.api_key:
                 api_key = self.api_key.split(':')
                 self._oauth = maas.MAASOAuth(consumer_key=api_key[0],
                                              resource_token=api_key[1],
                                              resource_secret=api_key[2])
+        cleave('RestClient.oauth (%s)' % self._oauth)
         return self._oauth
 
     def _get(self, path, **kwargs):
@@ -58,6 +63,8 @@ class RestClient():
         Issues a GET request to the MAAS REST API, returning the data
         from the query in the python form of the json data.
         """
+        center('RestClient._get')
+        center('    path: %s' % path)
         try:
             response = self.client.get(path, **kwargs)
             payload = response.read()
@@ -65,13 +72,21 @@ class RestClient():
                       payload)
 
             if response.getcode() == OK:
-                return Response(True, json.loads(payload))
+                retval = Response(True, json.loads(payload))
             else:
-                return Response(False, payload)
+                retval = Response(False, payload)
+        except HTTPError as e:
+            if e.getcode() == 401:
+                retval = Response(False, 'Athentication with MAAS server failed.')
+            else:
+                retval = Response(False, 'Unknown HTTPError: %d' % e.getcode())
+        except URLError as e:
+            retval = Response(False, 'Unable to connect to the MAAS server. (Errno: %d, %s)' % (e.reason[0], e.reason[1]))
         except Exception as e:
-            log.error("Error encountered: %s for %s with params %s",
-                      e.message, path, str(kwargs))
-            return Response(False, None)
+            log.error("Error encountered: %s for %s with params %s", e.message, path, str(kwargs))
+            retval = Response(False, None)
+        cleave('RestClient._get')
+        return retval
 
     def _post(self, path, op, **kwargs):
         """
