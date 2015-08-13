@@ -78,6 +78,8 @@ class RestClient():
         except HTTPError as e:
             if e.getcode() == 401:
                 retval = Response(False, 'Athentication with MAAS server failed.')
+            elif e.getcode() == 404:
+                retval = Response(False, 'Malformed restful query.')
             else:
                 retval = Response(False, 'Unknown HTTPError: %d' % e.getcode())
         except URLError as e:
