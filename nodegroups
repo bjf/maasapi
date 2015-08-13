@@ -31,17 +31,43 @@ class App():
             mc = MapiClient(s.url, s.creds)
 
             nodegroups = mc.nodegroups
+
+            # nodegroups -------------------------------------------------------
+            cdebug('    nodegroups', 'blue')
+
             # __len__()
-            cdebug('    len(nodegroups): %d' % len(nodegroups))
+            cdebug('        __len__()', 'magenta')
+            cdebug('            len(nodegroups): %d' % len(nodegroups))
 
             # __iter__()
+            cdebug('        __iter__()', 'blue')
             for group in nodegroups:
-                cdebug('    cluster name: \'%s\'' % group.cluster_name)
+                cdebug('            cluster name: \'%s\'' % group.cluster_name)
 
             # __getitem__()
-            cdebug('    cluster name: \'%s\'' % nodegroups[0].cluster_name)
+            cdebug('        __getitem__()', 'blue')
+            cdebug('            cluster name: \'%s\'' % nodegroups[0].cluster_name)
 
             interfaces = nodegroups[0].interfaces
+
+            # power types ------------------------------------------------------
+            cdebug('    power types', 'magenta')
+
+            ptypes = nodegroups.power_types
+
+            # __len__()
+            cdebug('        __len__()', 'blue')
+            cdebug('            len(ptypes): %d' % len(ptypes))
+
+            # __iter__()
+            cdebug('        __iter__()', 'blue')
+            for pt in ptypes:
+                cdebug('            name: \'%s\'' % pt['name'])
+
+            # __getitem__()
+            cdebug('        __getitem__()', 'blue')
+            cdebug('            name: \'%s\'' % ptypes[0]['name'])
+            print(ptypes[0])
 
             power = nodegroups.power_types
 
