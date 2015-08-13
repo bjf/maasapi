@@ -32,44 +32,74 @@ class App():
 
             nodegroups = mc.nodegroups
 
-            # nodegroups -------------------------------------------------------
-            cdebug('    nodegroups', 'blue')
+            cdebug('nodegroups ---------------------------------------------------', 'yellow')
 
             # __len__()
-            cdebug('        __len__()', 'magenta')
-            cdebug('            len(nodegroups): %d' % len(nodegroups))
+            cdebug('    __len__()', 'blue')
+            cdebug('        len(nodegroups): %d' % len(nodegroups))
 
             # __iter__()
-            cdebug('        __iter__()', 'blue')
+            cdebug('    __iter__()', 'blue')
             for group in nodegroups:
-                cdebug('            cluster name: \'%s\'' % group['cluster_name'])
+                cdebug('        cluster name: \'%s\'' % group['cluster_name'])
 
             # __getitem__()
-            cdebug('        __getitem__()', 'blue')
-            cdebug('            cluster name: \'%s\'' % nodegroups[0]['cluster_name'])
+            cdebug('    __getitem__()', 'blue')
+            cdebug('        cluster name: \'%s\'' % nodegroups[0]['cluster_name'])
 
-            interfaces = nodegroups[0].interfaces
-
-            # power types ------------------------------------------------------
-            cdebug('    power types', 'magenta')
+            cdebug('power types --------------------------------------------------', 'yellow')
 
             ptypes = nodegroups.power_types
 
             # __len__()
-            cdebug('        __len__()', 'blue')
-            cdebug('            len(ptypes): %d' % len(ptypes))
+            cdebug('    __len__()', 'blue')
+            cdebug('        len(ptypes): %d' % len(ptypes))
 
             # __iter__()
-            cdebug('        __iter__()', 'blue')
+            cdebug('    __iter__()', 'blue')
             for pt in ptypes:
-                cdebug('            name: \'%s\'' % pt['name'])
+                cdebug('        name: \'%s\'' % pt['name'])
 
             # __getitem__()
-            cdebug('        __getitem__()', 'blue')
-            cdebug('            name: \'%s\'' % ptypes[0]['name'])
-            print(ptypes[0])
+            cdebug('    __getitem__()', 'blue')
+            cdebug('        name: \'%s\'' % ptypes[0]['name'])
+            cdebug(ptypes[0])
 
-            power = nodegroups.power_types
+            cdebug('interfaces ---------------------------------------------------', 'yellow')
+
+            interfaces = nodegroups[0].interfaces
+
+            # __len__()
+            cdebug('    __len__()', 'blue')
+            cdebug('        len(interfaces): %d' % len(interfaces))
+
+            # __iter__()
+            cdebug('    __iter__()', 'blue')
+            for iface in interfaces:
+                cdebug('            name: \'%s\'' % iface['name'])
+
+            # __getitem__()
+            cdebug('    __getitem__()', 'blue')
+            cdebug('        name: \'%s\'' % interfaces[0]['name'])
+            cdebug(interfaces[0])
+
+            cdebug('boot images --------------------------------------------------', 'yellow')
+
+            images = nodegroups[0].boot_images
+
+            # __len__()
+            cdebug('    __len__()', 'blue')
+            cdebug('        len(images): %d' % len(images))
+
+            # __iter__()
+            cdebug('    __iter__()', 'blue')
+            for i in images:
+                cdebug('            release: \'%s\'  arch: \'%s\'  purpose:\'%s\'' % (i['release'], i['architecture'], i['purpose']))
+
+            # __getitem__()
+            cdebug('    __getitem__()', 'blue')
+            cdebug('        release: \'%s\'' % images[0]['release'])
+            cdebug(images[0])
 
             retval = 0
 
