@@ -4,6 +4,7 @@
 from log                                import center, cleave, cdebug
 from nodegroup                          import Nodegroup
 from error                              import MapiError
+from power_types                        import PowerTypes
 
 # Nodegroups
 #
@@ -57,3 +58,14 @@ class Nodegroups(object):
             s.__nodegroups = response.data
             cdebug('    fetched')
         cleave('Nodegroups.__fetch_if_needed')
+
+    # power_types
+    #
+    @property
+    def power_types(s):
+        center('Nodegroups.power_types')
+
+        retval = PowerTypes(s.__maas)
+
+        cleave('Nodegroups.power_types')
+        return retval
