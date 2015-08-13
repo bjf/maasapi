@@ -42,11 +42,11 @@ class App():
             # __iter__()
             cdebug('        __iter__()', 'blue')
             for group in nodegroups:
-                cdebug('            cluster name: \'%s\'' % group.cluster_name)
+                cdebug('            cluster name: \'%s\'' % group['cluster_name'])
 
             # __getitem__()
             cdebug('        __getitem__()', 'blue')
-            cdebug('            cluster name: \'%s\'' % nodegroups[0].cluster_name)
+            cdebug('            cluster name: \'%s\'' % nodegroups[0]['cluster_name'])
 
             interfaces = nodegroups[0].interfaces
 
