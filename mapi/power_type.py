@@ -2,7 +2,6 @@
 #
 
 from log                                import center, cleave
-from copy                               import deepcopy
 
 # PowerType
 #
@@ -13,10 +12,10 @@ class PowerType(dict):
     # __init__
     #
     def __init__(s, maas, ptype):
-        center('PowerType.__init__')
+        center(s.__class__.__name__)
         s.__maas = maas
 
         dict.__init__(s, ptype)
 
-        cleave('PowerType.__init__')
+        cleave(s.__class__.__name__)
 

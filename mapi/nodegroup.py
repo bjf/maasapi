@@ -2,7 +2,8 @@
 #
 
 from log                                import center, cleave
-from copy                               import deepcopy
+from interfaces                         import Interfaces
+from boot_images                        import BootImages
 
 # Nodegroup
 #
@@ -26,11 +27,18 @@ class Nodegroup(dict):
     def interfaces(s):
         center('Nodegroup.interfaces')
 
-        # nodegroups interfaces ---
-        _url = u'/nodegroups/%s/interfaces/' % s['uuid']
-        response = s.__maas._get(_url, op='list')
-        retval = response.data
+        retval = Interfaces(s.__maas, s['uuid'])
 
         center('Nodegroup.interfaces')
         return retval
 
+    # boot_images
+    #
+    @property
+    def boot_images(s):
+        center(s.__class__.__name__)
+
+        retval = BootImages(s.__maas, s['uuid'])
+
+        cleave(s.__class__.__name__)
+        return retval

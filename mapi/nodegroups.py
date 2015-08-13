@@ -15,10 +15,10 @@ class Nodegroups(object):
     # __init__
     #
     def __init__(s, maas):
-        center('Nodegroups.__init__')
+        center(s.__class__.__name__)
         s.__maas = maas
         s.__nodegroups = None
-        cleave('Nodegroups.__init__')
+        cleave(s.__class__.__name__)
 
     # __len__
     #
@@ -28,44 +28,44 @@ class Nodegroups(object):
     # __getitem__
     #
     def __getitem__(s, index):
-        center('Nodegroups.__getitem__')
+        center(s.__class__.__name__)
         s.__fetch_if_needed()
         retval = Nodegroup(s.__maas, s.__nodegroups[index])
-        cleave('Nodegroups.__getitem__')
+        cleave(s.__class__.__name__)
         return retval
 
     # __iter__
     #
     def __iter__(s):
-        center('Nodegroups.__iter__')
+        center(s.__class__.__name__)
         s.__fetch_if_needed()
         for group in s.__nodegroups:
             n = Nodegroup(s.__maas, group)
             yield n
-        cleave('Nodegroups.__iter__')
+        cleave(s.__class__.__name__)
 
     # __fetch_if_needed
     #
     def __fetch_if_needed(s):
-        center('Nodegroups.__fetch_if_needed')
+        center(s.__class__.__name__)
         if s.__nodegroups is None:
             response = s.__maas._get(u'/nodegroups/', op='list')
             if not response.ok:
                 if type(response.data) == str:
-                    cleave('Nodegroups.__fetch_if_needed')
+                    cleave(s.__class__.__name__)
                     raise MapiError(response.data)
 
             s.__nodegroups = response.data
             cdebug('    fetched')
-        cleave('Nodegroups.__fetch_if_needed')
+        cleave(s.__class__.__name__)
 
     # power_types
     #
     @property
     def power_types(s):
-        center('Nodegroups.power_types')
+        center(s.__class__.__name__)
 
         retval = PowerTypes(s.__maas)
 
-        cleave('Nodegroups.power_types')
+        cleave(s.__class__.__name__)
         return retval
