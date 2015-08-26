@@ -158,8 +158,8 @@ class RestClient(object):
 
         # Output.
         #cdebug('response.status: %d' % response.status)
-        cls.print_debug(response)
-        cls.print_response(response, content)
+        #cls.print_debug(response)
+        #cls.print_response(response, content)
 
         # 2xx status codes are all okay.
         if response.status // 100 != 2:
