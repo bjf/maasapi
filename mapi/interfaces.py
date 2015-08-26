@@ -49,7 +49,7 @@ class Interfaces(object):
     def __fetch_if_needed(s):
         center('Interfaces.__fetch_if_needed')
         if s.__interfaces is None:
-            response = s.__maas._get(u'/nodegroups/%s/interfaces/' % s.__uuid, op='list')
+            response = s.__maas.get(u'/nodegroups/%s/interfaces/' % s.__uuid, op='list')
             if not response.ok:
                 if type(response.data) == str:
                     cleave('Interfaces.__fetch_if_needed')

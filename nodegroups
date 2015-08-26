@@ -22,6 +22,26 @@ class App():
         s.url   = 'http://%s/MAAS/api/1.0' % s.args.cfg['maas']['ip']
         s.creds = s.args.cfg['maas']['creds']
 
+    # dump
+    #
+    def _dump(s, d, title=None):
+        if s.args.debug:
+            if title:
+                cdebug(title)
+                cdebug('-------------------------------------------------------------------------------------------')
+            if type(d) == dict:
+                cdebug('{')
+                for k in d:
+                    cdebug('    %s : %s,' % (k, d[k]))
+                cdebug('}')
+            elif type(d) == list:
+                cdebug('[')
+                for k in d:
+                    cdebug('    %s,' % (k))
+                cdebug(']')
+            else:
+                cdebug('    %s,' % (d))
+
     # main
     #
     def main(s):
@@ -31,6 +51,7 @@ class App():
             mc = MapiClient(s.url, s.creds)
 
             nodegroups = mc.nodegroups
+            nodegroup = nodegroups[0]
 
             cdebug('nodegroups ---------------------------------------------------', 'yellow')
 
@@ -100,6 +121,16 @@ class App():
             cdebug('    __getitem__()', 'blue')
             cdebug('        release: \'%s\'' % images[0]['release'])
             cdebug(images[0])
+
+            #cdebug('nodes --------------------------------------------------------', 'yellow')
+            #nodes = nodegroup.nodes
+            #s._dump(nodes, 'nodes')
+
+            #cdebug('details ------------------------------------------------------', 'yellow')
+            #s._dump(nodegroup.details)
+
+            #cdebug('import boot images -------------------------------------------', 'yellow')
+            #nodegroup.import_boot_images()
 
             retval = 0
 

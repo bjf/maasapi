@@ -49,7 +49,7 @@ class Nodegroups(object):
     def __fetch_if_needed(s):
         center(s.__class__.__name__)
         if s.__nodegroups is None:
-            response = s.__maas._get(u'/nodegroups/', op='list')
+            response = s.__maas.get(u'/nodegroups/', op='list')
             if not response.ok:
                 if type(response.data) == str:
                     cleave(s.__class__.__name__)

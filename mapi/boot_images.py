@@ -49,7 +49,7 @@ class BootImages(object):
     def __fetch_if_needed(s):
         center(s.__class__.__name__)
         if s.__boot_images is None:
-            response = s.__maas._get(u'/nodegroups/%s/boot-images/' % s.__uuid)
+            response = s.__maas.get(u'/nodegroups/%s/boot-images/' % s.__uuid)
             if not response.ok:
                 if type(response.data) == str:
                     cleave(s.__class__.__name__)
