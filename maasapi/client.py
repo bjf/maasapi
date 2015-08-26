@@ -3,9 +3,10 @@
 
 
 from log                                import center, cleave, cdebug
-from nodegroups                         import Nodegroups
-from response                           import Response
 from restclient                         import RestClient
+
+from nodegroups                         import Nodegroups
+from boot_resources                     import BootResources
 
 # MapiClient
 #
@@ -23,6 +24,10 @@ class MapiClient(RestClient):
     @property
     def nodegroups(s):
         return Nodegroups(s)
+
+    @property
+    def boot_resources(s):
+        return BootResources(s)
 
     def post(s, uri, op=None):
         center(s.__class__.__name__)

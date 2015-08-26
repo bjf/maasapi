@@ -53,74 +53,74 @@ class App():
             nodegroups = mc.nodegroups
             nodegroup = nodegroups[0]
 
-            cdebug('nodegroups ---------------------------------------------------', 'yellow')
+            #cdebug('nodegroups ---------------------------------------------------', 'yellow')
 
-            # __len__()
-            cdebug('    __len__()', 'blue')
-            cdebug('        len(nodegroups): %d' % len(nodegroups))
+            ## __len__()
+            #cdebug('    __len__()', 'blue')
+            #cdebug('        len(nodegroups): %d' % len(nodegroups))
 
-            # __iter__()
-            cdebug('    __iter__()', 'blue')
-            for group in nodegroups:
-                cdebug('        cluster name: \'%s\'' % group['cluster_name'])
+            ## __iter__()
+            #cdebug('    __iter__()', 'blue')
+            #for group in nodegroups:
+            #    cdebug('        cluster name: \'%s\'' % group['cluster_name'])
 
-            # __getitem__()
-            cdebug('    __getitem__()', 'blue')
-            cdebug('        cluster name: \'%s\'' % nodegroups[0]['cluster_name'])
+            ## __getitem__()
+            #cdebug('    __getitem__()', 'blue')
+            #cdebug('        cluster name: \'%s\'' % nodegroups[0]['cluster_name'])
 
-            cdebug('power types --------------------------------------------------', 'yellow')
+            #cdebug('power types --------------------------------------------------', 'yellow')
 
-            ptypes = nodegroups.power_types
+            #ptypes = nodegroups.power_types
 
-            # __len__()
-            cdebug('    __len__()', 'blue')
-            cdebug('        len(ptypes): %d' % len(ptypes))
+            ## __len__()
+            #cdebug('    __len__()', 'blue')
+            #cdebug('        len(ptypes): %d' % len(ptypes))
 
-            # __iter__()
-            cdebug('    __iter__()', 'blue')
-            for pt in ptypes:
-                cdebug('        name: \'%s\'' % pt['name'])
+            ## __iter__()
+            #cdebug('    __iter__()', 'blue')
+            #for pt in ptypes:
+            #    cdebug('        name: \'%s\'' % pt['name'])
 
-            # __getitem__()
-            cdebug('    __getitem__()', 'blue')
-            cdebug('        name: \'%s\'' % ptypes[0]['name'])
-            cdebug(ptypes[0])
+            ## __getitem__()
+            #cdebug('    __getitem__()', 'blue')
+            #cdebug('        name: \'%s\'' % ptypes[0]['name'])
+            #cdebug(ptypes[0])
 
-            cdebug('interfaces ---------------------------------------------------', 'yellow')
+            #cdebug('interfaces ---------------------------------------------------', 'yellow')
 
-            interfaces = nodegroups[0].interfaces
+            #interfaces = nodegroups[0].interfaces
 
-            # __len__()
-            cdebug('    __len__()', 'blue')
-            cdebug('        len(interfaces): %d' % len(interfaces))
+            ## __len__()
+            #cdebug('    __len__()', 'blue')
+            #cdebug('        len(interfaces): %d' % len(interfaces))
 
-            # __iter__()
-            cdebug('    __iter__()', 'blue')
-            for iface in interfaces:
-                cdebug('            name: \'%s\'' % iface['name'])
+            ## __iter__()
+            #cdebug('    __iter__()', 'blue')
+            #for iface in interfaces:
+            #    cdebug('            name: \'%s\'' % iface['name'])
 
-            # __getitem__()
-            cdebug('    __getitem__()', 'blue')
-            cdebug('        name: \'%s\'' % interfaces[0]['name'])
-            cdebug(interfaces[0])
+            ## __getitem__()
+            #cdebug('    __getitem__()', 'blue')
+            #cdebug('        name: \'%s\'' % interfaces[0]['name'])
+            #cdebug(interfaces[0])
 
-            cdebug('boot images --------------------------------------------------', 'yellow')
+            #cdebug('boot images --------------------------------------------------', 'yellow')
 
-            images = nodegroups[0].boot_images
+            #images = nodegroups[0].boot_images
 
-            # __len__()
-            cdebug('    __len__()', 'blue')
-            cdebug('        len(images): %d' % len(images))
+            ## __len__()
+            #cdebug('    __len__()', 'blue')
+            #cdebug('        len(images): %d' % len(images))
 
-            # __iter__()
-            cdebug('    __iter__()', 'blue')
-            for i in images:
-                cdebug('            release: \'%s\'  arch: \'%s\'  purpose:\'%s\'' % (i['release'], i['architecture'], i['purpose']))
+            ## __iter__()
+            #cdebug('    __iter__()', 'blue')
+            #for i in images:
+            #    cdebug('            release: \'%s\'  arch: \'%s\'  purpose:\'%s\'' % (i['release'], i['architecture'], i['purpose']))
 
-            # __getitem__()
-            cdebug('    __getitem__()', 'blue')
-            cdebug('        release: \'%s\'' % images[0]['release'])
-            cdebug(images[0])
+            ## __getitem__()
+            #cdebug('    __getitem__()', 'blue')
+            #cdebug('        release: \'%s\'' % images[0]['release'])
+            #cdebug(images[0])
 
             #cdebug('nodes --------------------------------------------------------', 'yellow')
             #nodes = nodegroup.nodes
@@ -131,6 +131,14 @@ class App():
 
             #cdebug('import boot images -------------------------------------------', 'yellow')
             #nodegroup.import_boot_images()
+
+            #cdebug('boot resources --------------------------------------------------', 'yellow')
+
+            #resources = mc.boot_resources
+
+            ## __len__()
+            #cdebug('    __len__()', 'blue')
+            #cdebug('        len(resources): %d' % len(resources))
 
             retval = 0
 
@@ -163,9 +171,8 @@ if __name__ == '__main__':
     setattr(args, 'cfg', cfg)
     if args.debug:
         level = DEBUG
-        Clog.dbg = True
+        Clog.dbg = args.debug
         Clog.color = not args.nc
-
     else:
         level = WARNING
 
