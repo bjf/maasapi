@@ -5,9 +5,9 @@ from argparse                           import ArgumentParser, RawDescriptionHel
 from logging                            import basicConfig, DEBUG, WARNING
 import yaml
 
-from mapi.log                           import Clog, center, cleave, cdebug
-from mapi.client                        import MapiClient
-from mapi.error                         import MapiError
+from maasapi.log                        import Clog, center, cleave, cdebug
+from maasapi.client                     import MapiClient
+from maasapi.error                      import MapiError
 
 # App
 #
