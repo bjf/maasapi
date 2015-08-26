@@ -20,7 +20,7 @@ from email.message                      import Message
 from apiclient                          import maas_client as maas
 import json
 
-from log                                import center, cleave, cdebug
+from log                                import center, cleave, cdebug, Clog
 from response                           import Response
 
 #--------------------------------------------------------------------------------
@@ -169,6 +169,8 @@ class RestClient(object):
         if is_response_textual(response):
             try:
                 retval = Response(True, json.loads(content))
+                if Clog.dbg:
+                    cdebug('content: %s' % content)
             except ValueError:
                 # The content is not a json string. Just assume it's a plain string.
                 #
