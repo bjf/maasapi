@@ -1,7 +1,0 @@
-maas:
-    # Defines the IP Address for the MAAS server.
-    #
-    ip: 10.10.10.10
-
-    #
-    creds: VxFpPVkTJ8fkH6MqCq:GC9QjEr4GFaHe2dFcC:eWELKWXvVpTRa8Vzkb9CajVVH2vhXTv9
