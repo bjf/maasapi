@@ -22,6 +22,7 @@ import json
 
 from log                                import center, cleave, cdebug, Clog
 from response                           import Response
+from error                              import MaasApiUnknownError, MaasApiCertificateVerificationError, MaasApiHttpServiceUnavailable
 
 #--------------------------------------------------------------------------------
 
@@ -41,7 +42,7 @@ def http_request(url, method, body=None, headers=None,
         return http.request(url, method, body=body, headers=headers)
     except httplib2.SSLHandshakeError:
         cleave('api.http_request')
-        raise CommandError(
+        raise MaasApiCertificateVerificationError(0,
             "Certificate verification failed, use --insecure/-k to "
             "disable the certificate check.")
 
@@ -164,7 +165,10 @@ class RestClient(object):
         # 2xx status codes are all okay.
         if response.status // 100 != 2:
             cleave('MaiClient.call')
-            raise CommandError(2)
+            if response.status == 503:
+                raise MaasApiHttpServiceUnavailable(response.status, content)
+            else:
+                raise MaasApiUnknownError(response.status, content)
 
         if is_response_textual(response):
             try:

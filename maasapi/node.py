@@ -3,7 +3,7 @@
 
 from log                                import center, cleave
 from mydict                             import MyDict
-from error                              import MapiError
+from error                              import MaasApiHttpServiceUnavailable, MaasApiPowerResponseTimeout
 
 # Node
 #
@@ -24,7 +24,10 @@ class Node(MyDict):
     @property
     def power_state(s):
         center(s.__class__.__name__)
-        response = s.__maas.get(u'/nodes/%s/' % s['system_id'], op='query_power_state')
-        retval = response.data['state']
+        try:
+            response = s.__maas.get(u'/nodes/%s/' % s['system_id'], op='query_power_state')
+            retval = response.data['state']
+        except MaasApiHttpServiceUnavailable as e:
+            raise MaasApiPowerResponseTimeout(e.status, e.message)
         cleave(s.__class__.__name__)
         return retval
