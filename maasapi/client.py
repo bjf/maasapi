@@ -7,6 +7,7 @@ from restclient                         import RestClient
 
 from nodegroups                         import Nodegroups
 from boot_resources                     import BootResources
+from boot_sources                       import BootSources
 
 # MapiClient
 #
@@ -28,6 +29,10 @@ class MapiClient(RestClient):
     @property
     def boot_resources(s):
         return BootResources(s)
+
+    @property
+    def boot_sources(s):
+        return BootSources(s)
 
     def post(s, uri, op=None):
         center(s.__class__.__name__)

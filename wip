@@ -140,6 +140,24 @@ class App():
             #cdebug('    __len__()', 'blue')
             #cdebug('        len(resources): %d' % len(resources))
 
+            cdebug('boot sources ----------------------------------------------------', 'yellow')
+
+            sources = mc.boot_sources
+
+            # __len__()
+            cdebug('    __len__()', 'blue')
+            cdebug('        len(sources): %d' % len(sources))
+
+            # __iter__()
+            cdebug('    __iter__()', 'blue')
+            for src in sources:
+                cdebug('            url: \'%s\'  keyring_data: \'%s\'  resource_uri: \'%s\'  keyring_filename:\'%s\'  id: %d' % (src['url'], src['keyring_data'], src['resource_uri'], src['keyring_filename'], src['id']))
+
+            # __getitem__()
+            cdebug('    __getitem__()', 'blue')
+            cdebug('        url: \'%s\'' % sources[0]['url'])
+            cdebug(sources[0])
+
             retval = 0
 
         except MapiError as e:
