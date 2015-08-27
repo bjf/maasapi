@@ -11,6 +11,18 @@ class MapiError(Exception):
     def __init__(s, reason):
         s.reason = reason
 
+# MaasApiNotImplemented
+#
+class MaasApiNotImplemented(Exception):
+    '''
+    Place holder exception until we implement the method/property affected.
+    '''
+    # __init__
+    #
+    def __init__(s):
+        s.status  = 0
+        s.message = "This method/property has not been implemented."
+
 # MaasApiUnknownError
 #
 class MaasApiUnknownError(Exception):
