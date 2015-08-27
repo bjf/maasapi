@@ -31,3 +31,11 @@ class Node(MyDict):
             raise MaasApiPowerResponseTimeout(e.status, e.message)
         cleave(s.__class__.__name__)
         return retval
+
+    @property
+    def details(s):
+        center(s.__class__.__name__)
+        response = s.__maas.get(u'/nodes/%s/' % s['system_id'], op='details')
+        retval = response.data
+        cleave(s.__class__.__name__)
+        return retval
