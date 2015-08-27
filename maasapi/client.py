@@ -8,6 +8,7 @@ from restclient                         import RestClient
 from nodegroups                         import Nodegroups
 from boot_resources                     import BootResources
 from boot_sources                       import BootSources
+from nodes                              import Nodes
 
 # MapiClient
 #
@@ -33,6 +34,14 @@ class MapiClient(RestClient):
     @property
     def boot_sources(s):
         return BootSources(s)
+
+    @property
+    def nodes(s):
+        return Nodes(s)
+
+    @property
+    def nodes_allocated(s):
+        return Nodes(s, op='list_allocated')
 
     def post(s, uri, op=None):
         center(s.__class__.__name__)
