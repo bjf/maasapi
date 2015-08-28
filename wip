@@ -7,7 +7,7 @@ import yaml
 
 from maasapi.log                        import Clog, center, cleave, cdebug
 from maasapi.client                     import MapiClient
-from maasapi.error                      import MapiError
+from maasapi.error                      import MapiError, MaasApiPowerResponseTimeout
 
 # App
 #
@@ -50,114 +50,57 @@ class App():
         try:
             mc = MapiClient(s.url, s.creds)
 
-            nodegroups = mc.nodegroups
-            nodegroup = nodegroups[0]
+            #   cdebug('nodes -----------------------------------------------------------', 'yellow')
 
-            #cdebug('nodegroups ---------------------------------------------------', 'yellow')
+            #   nodes = mc.nodes
 
-            ## __len__()
-            #cdebug('    __len__()', 'blue')
-            #cdebug('        len(nodegroups): %d' % len(nodegroups))
+            #   ## __len__()
+            #   #cdebug('    __len__()', 'blue')
+            #   #cdebug('        len(nodes): %d' % len(nodes))
 
-            ## __iter__()
-            #cdebug('    __iter__()', 'blue')
-            #for group in nodegroups:
-            #    cdebug('        cluster name: \'%s\'' % group['cluster_name'])
+            #   ## __getitem__()
+            #   #nodes[0].dump(title='Node 0')
+            #   #cdebug('    __getitem__()', 'blue')
+            #   #cdebug('        system_id: \'%s\'' % nodes[0]['system_id'])
 
-            ## __getitem__()
-            #cdebug('    __getitem__()', 'blue')
-            #cdebug('        cluster name: \'%s\'' % nodegroups[0]['cluster_name'])
+            #   ## __iter__()
+            #   #cdebug('    __iter__()', 'blue')
+            #   #for node in nodes:
+            #   #    cdebug('            system_id: \'%s\'' % (node['system_id']))
 
-            #cdebug('power types --------------------------------------------------', 'yellow')
+            #   print('This MAAS server knows about %d nodes.' % len(nodes))
+            #   for node in nodes:
+            #       print('hostname: %s' % node['hostname'])
+            #       try:
+            #           print('    power state: %s' % node.power_state)
+            #       except MaasApiPowerResponseTimeout:
+            #           print('    power state: Broken')
+            #       details = node.details
+            #       print
 
-            #ptypes = nodegroups.power_types
+            #   print(nodes[0].details)
 
-            ## __len__()
-            #cdebug('    __len__()', 'blue')
-            #cdebug('        len(ptypes): %d' % len(ptypes))
+            cdebug('zones -----------------------------------------------------------', 'yellow')
 
-            ## __iter__()
-            #cdebug('    __iter__()', 'blue')
-            #for pt in ptypes:
-            #    cdebug('        name: \'%s\'' % pt['name'])
-
-            ## __getitem__()
-            #cdebug('    __getitem__()', 'blue')
-            #cdebug('        name: \'%s\'' % ptypes[0]['name'])
-            #cdebug(ptypes[0])
-
-            #cdebug('interfaces ---------------------------------------------------', 'yellow')
-
-            #interfaces = nodegroups[0].interfaces
-
-            ## __len__()
-            #cdebug('    __len__()', 'blue')
-            #cdebug('        len(interfaces): %d' % len(interfaces))
-
-            ## __iter__()
-            #cdebug('    __iter__()', 'blue')
-            #for iface in interfaces:
-            #    cdebug('            name: \'%s\'' % iface['name'])
-
-            ## __getitem__()
-            #cdebug('    __getitem__()', 'blue')
-            #cdebug('        name: \'%s\'' % interfaces[0]['name'])
-            #cdebug(interfaces[0])
-
-            #cdebug('boot images --------------------------------------------------', 'yellow')
-
-            #images = nodegroups[0].boot_images
-
-            ## __len__()
-            #cdebug('    __len__()', 'blue')
-            #cdebug('        len(images): %d' % len(images))
-
-            ## __iter__()
-            #cdebug('    __iter__()', 'blue')
-            #for i in images:
-            #    cdebug('            release: \'%s\'  arch: \'%s\'  purpose:\'%s\'' % (i['release'], i['architecture'], i['purpose']))
-
-            ## __getitem__()
-            #cdebug('    __getitem__()', 'blue')
-            #cdebug('        release: \'%s\'' % images[0]['release'])
-            #cdebug(images[0])
-
-            #cdebug('nodes --------------------------------------------------------', 'yellow')
-            #nodes = nodegroup.nodes
-            #s._dump(nodes, 'nodes')
-
-            #cdebug('details ------------------------------------------------------', 'yellow')
-            #s._dump(nodegroup.details)
-
-            #cdebug('import boot images -------------------------------------------', 'yellow')
-            #nodegroup.import_boot_images()
-
-            #cdebug('boot resources --------------------------------------------------', 'yellow')
-
-            #resources = mc.boot_resources
-
-            ## __len__()
-            #cdebug('    __len__()', 'blue')
-            #cdebug('        len(resources): %d' % len(resources))
-
-            cdebug('boot sources ----------------------------------------------------', 'yellow')
-
-            sources = mc.boot_sources
+            zones = mc.zones
 
             # __len__()
             cdebug('    __len__()', 'blue')
-            cdebug('        len(sources): %d' % len(sources))
+            cdebug('        len(zones): %d' % len(zones))
 
-            # __iter__()
-            cdebug('    __iter__()', 'blue')
-            for src in sources:
-                cdebug('            url: \'%s\'  keyring_data: \'%s\'  resource_uri: \'%s\'  keyring_filename:\'%s\'  id: %d' % (src['url'], src['keyring_data'], src['resource_uri'], src['keyring_filename'], src['id']))
+            cdebug('for zone in zones:')
+            for zone in zones:
+                print('name: \'%s\'  resource_uri: %s  description: \'%s\' ' % (zone['name'], zone['resource_uri'], zone['description']))
 
-            # __getitem__()
-            cdebug('    __getitem__()', 'blue')
-            cdebug('        url: \'%s\'' % sources[0]['url'])
-            cdebug(sources[0])
+            #del(zones['zip'])
 
+            cdebug('')
+            cdebug('for zone in zones:')
+            for zone in zones:
+                print('name: \'%s\'  resource_uri: %s  description: \'%s\' ' % (zone['name'], zone['resource_uri'], zone['description']))
+
+            #cdebug('settting "my zone"')
+            #zones['zip'] = 'zap'
             retval = 0
 
         except MapiError as e:
