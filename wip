@@ -50,6 +50,11 @@ class App():
         try:
             mc = MapiClient(s.url, s.creds)
 
+            v = mc.version
+            print('     version: %s' % v['version'])
+            print('  subversion: %s' % v['subversion'])
+            print('capabilities: %s' % ', '.join(v['capabilities']))
+
             #   cdebug('nodes -----------------------------------------------------------', 'yellow')
 
             #   nodes = mc.nodes
@@ -80,24 +85,24 @@ class App():
 
             #   print(nodes[0].details)
 
-            cdebug('zones -----------------------------------------------------------', 'yellow')
+            #cdebug('zones -----------------------------------------------------------', 'yellow')
 
-            zones = mc.zones
+            #zones = mc.zones
 
-            # __len__()
-            cdebug('    __len__()', 'blue')
-            cdebug('        len(zones): %d' % len(zones))
+            ## __len__()
+            #cdebug('    __len__()', 'blue')
+            #cdebug('        len(zones): %d' % len(zones))
 
-            cdebug('for zone in zones:')
-            for zone in zones:
-                print('name: \'%s\'  resource_uri: %s  description: \'%s\' ' % (zone['name'], zone['resource_uri'], zone['description']))
+            #cdebug('for zone in zones:')
+            #for zone in zones:
+            #    print('name: \'%s\'  resource_uri: %s  description: \'%s\' ' % (zone['name'], zone['resource_uri'], zone['description']))
 
-            #del(zones['zip'])
+            ##del(zones['zip'])
 
-            cdebug('')
-            cdebug('for zone in zones:')
-            for zone in zones:
-                print('name: \'%s\'  resource_uri: %s  description: \'%s\' ' % (zone['name'], zone['resource_uri'], zone['description']))
+            #cdebug('')
+            #cdebug('for zone in zones:')
+            #for zone in zones:
+            #    print('name: \'%s\'  resource_uri: %s  description: \'%s\' ' % (zone['name'], zone['resource_uri'], zone['description']))
 
             #cdebug('settting "my zone"')
             #zones['zip'] = 'zap'

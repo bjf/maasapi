@@ -5,6 +5,7 @@
 from log                                import center, cleave, cdebug
 from restclient                         import RestClient
 
+from error                              import MapiError
 from nodegroups                         import Nodegroups
 from boot_resources                     import BootResources
 from boot_sources                       import BootSources
@@ -39,6 +40,19 @@ class MapiClient(RestClient):
     @property
     def nodes(s):
         return Nodes(s)
+
+    @property
+    def version(s):
+        center(s.__class__.__name__)
+        response = s.get(u'/version/')
+        if not response.ok:
+            if type(response.data) == str:
+                cleave(s.__class__.__name__)
+                raise MapiError(response.data)
+
+        retval = response.data
+        cleave(s.__class__.__name__)
+        return retval
 
     @property
     def zones(s):
