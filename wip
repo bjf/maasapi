@@ -8,6 +8,7 @@ import yaml
 from maasapi.log                        import Clog, center, cleave, cdebug
 from maasapi.client                     import MapiClient
 from maasapi.error                      import MapiError, MaasApiPowerResponseTimeout
+from maasapi.user                       import User
 
 # App
 #
@@ -106,6 +107,20 @@ class App():
 
             #cdebug('settting "my zone"')
             #zones['zip'] = 'zap'
+
+            cdebug('users -----------------------------------------------------------', 'yellow')
+
+            users = mc.users
+
+            print('')
+            print('no. of users: %d' % len(users))
+
+            print('')
+            for user in users:
+                print('username: %-24s    admin: %5s    email: \'%s\'' % (user.username, user.superuser, user.email))
+
+            #users.add(User(username='bradf', password='ubuntu', superuser=True, email='brad@foo.com'))
+
             retval = 0
 
         except MapiError as e:

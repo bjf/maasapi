@@ -10,6 +10,7 @@ from nodegroups                         import Nodegroups
 from boot_resources                     import BootResources
 from boot_sources                       import BootSources
 from nodes                              import Nodes
+from users                              import Users
 from zones                              import Zones
 
 # MapiClient
@@ -40,6 +41,10 @@ class MapiClient(RestClient):
     @property
     def nodes(s):
         return Nodes(s)
+
+    @property
+    def users(s):
+        return Users(s)
 
     @property
     def version(s):
