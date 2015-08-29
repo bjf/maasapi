@@ -11,6 +11,7 @@ from boot_resources                     import BootResources
 from boot_sources                       import BootSources
 from nodes                              import Nodes
 from users                              import Users
+from version                            import Version
 from zones                              import Zones
 
 # MapiClient
@@ -55,7 +56,7 @@ class MapiClient(RestClient):
                 cleave(s.__class__.__name__)
                 raise MapiError(response.data)
 
-        retval = response.data
+        retval = Version(response.data)
         cleave(s.__class__.__name__)
         return retval
 

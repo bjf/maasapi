@@ -52,9 +52,9 @@ class App():
             mc = MapiClient(s.url, s.creds)
 
             v = mc.version
-            print('     version: %s' % v['version'])
-            print('  subversion: %s' % v['subversion'])
-            print('capabilities: %s' % ', '.join(v['capabilities']))
+            print('     version: %s' % v.version)
+            print('  subversion: %s' % v.subversion)
+            print('capabilities: %s' % ', '.join(v.capabilities))
 
             #   cdebug('nodes -----------------------------------------------------------', 'yellow')
 
