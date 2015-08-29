@@ -1,0 +1,10 @@
+#!/bin/sh
+#
+
+sudo apt-get update
+
+# Packages that are needed to be able to create the MAAS lxc container for
+# testing.
+#
+pkgs="python-yaml lxc"
+sudo apt-get install --yes $pkgs

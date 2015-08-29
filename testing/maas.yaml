@@ -1,0 +1,8 @@
+# This is the configuration file that is fed into mk.maas and is
+# used to create and configure the MAAS lxc container that is used
+# for testing maasapi.
+#
+maas:
+    name: maasapi-maas
+    series: trusty
+    arch: amd64

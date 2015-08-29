@@ -1,0 +1,334 @@
+#!/usr/bin/env python
+#
+
+from os                                 import path
+from sys                                import stderr
+from logging                            import error, basicConfig, DEBUG, WARNING
+import yaml
+
+from argparse                           import ArgumentParser, RawDescriptionHelpFormatter
+from lib.shell                          import ShellError, ShellTimeoutError, sh, Shell
+from lib.log                            import Clog, center, cleave, cdebug
+from time                               import sleep
+
+# SysgenBase
+#
+class SysgenBase(object):
+    '''
+    '''
+
+    # __init__
+    #
+    def __init__(s, target, series='trusty', arch='amd64'):
+        s.target = target
+        s.series = series
+        s.arch   = arch
+        s.progress_dots = 0
+        s.progress_msg = ''
+        s.show_progress = True
+
+    # progress
+    #
+    def progress(s, msg):
+        '''
+        Simple 'progress' messages sent to stdout to give the user some feeling that something
+        is happening.
+        '''
+        if s.show_progress:
+            dots = '.'
+            s.progress_dots += 1
+            prev_msg = s.progress_msg
+            s.progress_msg = dots + ' ' + msg
+            stderr.write(' ' + s.progress_msg + '\n')
+            stderr.flush()
+
+# UVT
+#
+class UVT(SysgenBase):
+    '''
+    '''
+
+    # __init__
+    #
+    def __init__(s, target, series='trusty', arch='amd64'):
+        SysgenBase.__init__(s, target, series, arch)
+
+    def create(s):
+        sh('uvt-kvm create --cpu=2 --memory=1024 %s release=%s arch=%s' % (s.target, s.series, s.arch))
+        sh('uvt-kvm wait %s --insecure' % (s.target))
+        return
+
+    def ssh(s, cmd):
+        sh('uvt-kvm ssh %s %s' % (s.target, cmd))
+
+    def ip(s):
+        retval = '_bogus_ip_'
+        result, output = sh('uvt-kvm ip %s' % (s.target), quiet=True)
+        if result == 0:
+            retval = output[0].strip()
+        return retval
+
+    def destroy(s):
+        return sh('uvt-kvm destroy %s' % (s.target))
+
+    def exists(s):
+        retval = False
+        result, output = sh('uvt-kvm list')
+        for instance in output:
+            if s.target in instance.strip():
+                retval = True
+                break
+        return retval
+
+    def up(s):
+        retval = True
+        result, output = sh('uvt-kvm wait %s --insecure' % (s.target), ignore_result=True)
+        if int(result) != 0:
+            for line in output:
+                cdebug(line)
+                if 'is not running' in line.strip():
+                    retval = False
+                    break
+        return retval
+
+    def start(s):
+        sh('virsh start %s' % (s.target))
+        sh('uvt-kvm wait %s --insecure' % (s.target))
+        return
+
+# LXC
+#
+class LXC(SysgenBase):
+    '''
+    '''
+
+    # __init__
+    #
+    def __init__(s, target, series='trusty', arch='amd64'):
+        SysgenBase.__init__(s, target, series, arch)
+
+    def create(s):
+        s.progress('Create lxc container')
+        sh('sudo lxc-create -t download -n %s -- --dist ubuntu --release %s --arch %s' % (s.target, s.series, s.arch), quiet=True)
+        # Configure the LXC container to be able to use loop mounts
+        #
+        sh('echo -n "\n#allow loop\nlxc.aa_profile = unconfined\nlxc.cgroup.devices.allow = b 7:* rwm\nlxc.cgroup.devices.allow = c 10:237 rwm\n" | sudo tee -a /var/lib/lxc/%s/config' % (s.target), quiet=True)
+
+        s.start()
+        sleep(10)
+
+        s.progress('Update the packages')
+        sh('sudo lxc-attach -n %s -- sudo apt-get update' % (s.target), quiet=True)
+        sh('sudo lxc-attach -n %s -- sudo apt-get --yes dist-upgrade' % (s.target), quiet=True)
+
+        s.progress('Setup & enable ssh')
+        sh('sudo lxc-attach -n %s -- sudo apt-get --yes install --yes openssh-server software-properties-common' % (s.target), quiet=True)
+        sh('sudo lxc-attach -n %s -- sudo mkdir -p /home/ubuntu/.ssh' % (s.target))
+        s.cp_sshkey()
+        sh('sudo lxc-attach -n %s -- sudo chown -R ubuntu.ubuntu /home/ubuntu/.ssh' % (s.target))
+
+        s.progress('Enable sudo')
+        sh('echo \'ubuntu ALL=(ALL) NOPASSWD: ALL\' | sudo tee /var/lib/lxc/%s/rootfs/etc/sudoers.d/ubuntu' % (s.target), quiet=True)
+
+    def start(s):
+        s.progress('Start lxc container')
+        sh('sudo lxc-start -n %s -d' % (s.target))
+
+    def ip(s):
+        retval = '_bogus_ip_'
+        result, output = sh('sudo lxc-info -n %s' % (s.target), quiet=True)
+        for line in output:
+            if line.startswith('IP:'):
+                retval = line.split()[1].strip()
+        return retval
+
+    def destroy(s):
+        s.progress('Destroying existing lxc container with same name')
+        if s.up():
+            sh('sudo lxc-stop -n %s' % (s.target))
+
+        return sh('sudo lxc-destroy -n %s' % (s.target))
+
+    def exists(s):
+        retval = False
+        result, output = sh('sudo lxc-ls', quiet=True)
+        for instance in output:
+            if s.target in instance.strip():
+                retval = True
+                break
+        return retval
+
+    def up(s):
+        retval = False
+        result, output = sh('sudo lxc-ls --fancy', quiet=True)
+        for line in output:
+            if (s.target in line) and ('RUNNING' in line):
+                retval = True
+                break
+        return retval
+
+    def cp_sshkey(s):
+        if not path.exists(path.expanduser('~/.ssh/id_rsa.pub')):
+            sh('ssh-keygen -q -P \'\' -f ~/.ssh/id_rsa')
+        sh('sudo cp ~/.ssh/id_rsa.pub /var/lib/lxc/%s/rootfs/home/ubuntu/.ssh/authorized_keys' % (s.target))
+
+# MkMAAS
+#
+class MkMAAS():
+    '''
+    '''
+
+    # __init__
+    #
+    def __init__(s, args):
+        s.args = args
+        s.neo = '_bogus_'
+        s.maas_admin_username = 'ubuntu'
+        s.maas_admin_password = 'ubuntu'
+        s.maas_admin_email    = 'ubuntu@canonical.com'
+
+    # mssh
+    #
+    #
+    def mssh(s, cmd, quiet=True, ignore_result=False, additional_ssh_options=''):
+        '''
+        Helper for ssh'ing to the provisioning server. This is done a lot with the
+        same options over and over.
+        '''
+        center("MkMAAS::mssh")
+        result, output = Shell.ssh(s.neo, cmd, additional_ssh_options=additional_ssh_options, user='ubuntu', quiet=quiet, ignore_result=ignore_result)
+        cleave("MkMAAS::mssh (%d)" % result)
+        return result, output
+
+    def maasify(s, progress):
+        progress('Enable maas-maintainers/stable')
+        s.mssh('sudo apt-add-repository --yes ppa:maas-maintainers/stable')
+        s.mssh('sudo apt-get update')
+        s.mssh('sudo apt-get --yes dist-upgrade')
+
+        progress('Installing MAAS')
+        s.mssh('sudo apt-get --yes install --yes maas')
+        s.mssh('sudo maas-region-admin createadmin --username=\'%s\' --password=\'%s\' --email=\'%s\'' % (s.maas_admin_username, s.maas_admin_password, s.maas_admin_email))
+        s.mssh('sudo maas-region-admin apikey --username=\'%s\' > ~/maas-apikey' % (s.maas_admin_username))
+        result, output = s.mssh('sudo maas-region-admin apikey --username=\'%s\'' % (s.maas_admin_username))
+        s.creds = output[0].strip()
+        s.mssh('maas login %s http://%s/MAAS/api/1.0 %s' % (s.maas_admin_username, s.neo, s.creds))
+        s.mssh('maas %s boot-source update 1 url=http://maas.ubuntu.com/images/ephemeral-v2/daily/' % (s.maas_admin_username))
+        #s.mssh('maas %s boot-source-selection delete 1 1' % (s.maas_admin_username), quiet=False)
+        #for series in ['precise', 'trusty', 'vivid', 'wily']:
+        #    s.mssh('maas %s boot-source-selections create 1 release="%s" arches="amd64" arches="i386" subarches="*" labels="daily"' % (s.maas_admin_username, series), quiet=False)
+        #s.mssh('maas %s boot-sources read' % (s.maas_admin_username), quiet=False)
+        #s.mssh('maas %s boot-source-selections read 1' % (s.maas_admin_username), quiet=False)
+        #s.mssh('maas %s node-groups import-boot-images' % (s.maas_admin_username))
+
+
+    # main
+    #
+    def main(s):
+        center('MkMAAS::main')
+        retval = 1
+        cfg = s.args.cfg['maas']
+        try:
+            if s.args.kvm:
+                sysgen = UVT(cfg['name'], cfg['series'], cfg['arch'])
+            else:
+                sysgen = LXC(cfg['name'], cfg['series'], cfg['arch'])
+
+            if s.args.scorch and sysgen.exists():
+                sysgen.destroy()
+
+            if not sysgen.exists():
+                sysgen.create()
+
+            if not sysgen.up():
+                sysgen.start()
+
+            s.neo = sysgen.ip()
+
+            s.maasify(sysgen.progress)
+
+            print('maas:')
+            print('    # Defines the IP Address for the MAAS server.')
+            print('    #')
+            print('    ip: %s' % s.neo)
+            print('')
+            print('    # The MAAS api key that is to be used.')
+            print('    #')
+            print('    creds: %s' % s.creds)
+            retval = 0
+
+        # Handle the user presses <ctrl-C>.
+        #
+        except KeyboardInterrupt:
+            print("Aborting ...")
+
+        except ShellTimeoutError as e:
+            error('The command (%s) timed out. (%d)' % (e.cmd, e.timeout))
+
+        except ShellError as e:
+            error('The command (%s) returned a non-zero exit status (%d).' % (e.cmd, e.returncode))
+            for line in e.output:
+                error(line.rstrip())
+
+        if retval > 0:
+            error("")
+            error("Due to the above error(s), this script is unable to continue and is terminating.")
+            error("")
+
+        cleave('MkMAAS::main')
+        return retval
+
+if __name__ == '__main__':
+    app_description = '''
+    '''
+
+    app_epilog = '''
+    '''
+
+    parser = ArgumentParser(description=app_description, epilog=app_epilog, formatter_class=RawDescriptionHelpFormatter)
+    parser.add_argument('config',    type=str, nargs=1,                     help='The configuration information for the MAAS server')
+    #parser.add_argument('target',    type=str, nargs=1,                     help='The name of the system to be provisioned.')
+    #parser.add_argument('--series',  type=str, nargs=1,   default='trusty', help='The series to be used for the system to be created.')
+    #parser.add_argument('--arch',    type=str, nargs=1,   default='amd64',  help='The series to be used for the system to be created.')
+    parser.add_argument('--debug',   action='store_true', default=False,    help='Print out lots of stuff.')
+    parser.add_argument('--nc',      action='store_true', default=False,    help='Debut output should not be colored.')
+    parser.add_argument('--scorch',  action='store_true', default=False,    help='Destroy a system with the target name if it exists.')
+    parser.add_argument('--kvm',     action='store_true', default=False,    help='Create a KVM instance instead of an LXC instance.')
+
+    args = parser.parse_args()
+    #args.target = args.target[0]
+    #args.series = args.series[0]
+    #args.arch   = args.arch[0]
+
+    if args.debug:
+        level = DEBUG
+        Clog.dbg = True
+        Clog.color = not args.nc
+    else:
+        level = WARNING
+    basicConfig(level=level, format="%(levelname)s - %(message)s")
+
+    # Load the configuration
+    #
+    cfg = yaml.safe_load(file(args.config[0]))
+    setattr(args, 'cfg', cfg)
+    cdebug('args:')
+    for k in vars(args):
+        if k == 'cfg':
+            cfg = getattr(args, 'cfg')
+            cdebug('    cfg:')
+            for c in cfg:
+                if type(cfg[c]) is dict:
+                    cdebug('        %s:' % (c))
+                    for x in cfg[c]:
+                        cdebug('            %s: %s' % (x, cfg[c][x]))
+                else:
+                    cdebug('        %s: %s' % (c, cfg[c]))
+        else:
+            cdebug('    %s: %s' % (k, getattr(args, k)))
+
+    app = MkMAAS(args)
+    exit(app.main())
+
+# vi:set ts=4 sw=4 expandtab syntax=python:
+
