@@ -3,7 +3,11 @@
 
 from log                                import center, cleave
 from mydict                             import MyDict
-from error                              import MaasApiHttpServiceUnavailable, MaasApiPowerResponseTimeout
+from error                              import (
+                                                 MaasApiHttpServiceUnavailable,
+                                                 MaasApiPowerResponseTimeout,
+                                                 MaasApiNotImplemented
+                                               )
 
 # Node
 #
@@ -39,3 +43,34 @@ class Node(MyDict):
         retval = response.data
         cleave(s.__class__.__name__)
         return retval
+
+    def abort_operation(s):
+        response = s.__maas.post(u'/nodes/%s/' % s['system_id'], op='abort_operation')
+        raise MaasApiNotImplemented()
+
+    def clain_sticky_ip_address(s, mac_address, requested_address):
+        response = s.__maas.post(u'/nodes/%s/' % s['system_id'], op='claim_sticky_ip_address')
+        raise MaasApiNotImplemented()
+
+    def commission(s):
+        response = s.__maas.post(u'/nodes/%s/' % s['system_id'], op='commission')
+        raise MaasApiNotImplemented()
+
+    def mark_broken(s, description=None):
+        response = s.__maas.post(u'/nodes/%s/' % s['system_id'], op='mark_broken')
+        raise MaasApiNotImplemented()
+
+    def release(s):
+        response = s.__maas.post(u'/nodes/%s/' % s['system_id'], op='release')
+        raise MaasApiNotImplemented()
+
+    def set_storage_layout(s):
+        raise MaasApiNotImplemented()
+
+    def start(s, distro_series=None, hwe_kernel=None, user_data=None):
+        response = s.__maas.post(u'/nodes/%s/' % s['system_id'], op='start')
+        raise MaasApiNotImplemented()
+
+    def stop(s, mode=None):
+        response = s.__maas.post(u'/nodes/%s/' % s['system_id'], op='stop')
+        raise MaasApiNotImplemented()
