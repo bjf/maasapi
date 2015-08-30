@@ -9,6 +9,7 @@ from maasapi.log                        import Clog, center, cleave, cdebug
 from maasapi.client                     import MapiClient
 from maasapi.error                      import MapiError, MaasApiPowerResponseTimeout
 from maasapi.user                       import User
+from maasapi.tag                        import Tag
 
 # App
 #
@@ -108,19 +109,33 @@ class App():
             #cdebug('settting "my zone"')
             #zones['zip'] = 'zap'
 
-            cdebug('users -----------------------------------------------------------', 'yellow')
+            #cdebug('users -----------------------------------------------------------', 'yellow')
 
-            users = mc.users
+            #users = mc.users
+
+            #print('')
+            #print('no. of users: %d' % len(users))
+
+            #print('')
+            #for user in users:
+            #    print('username: %-24s    admin: %5s    email: \'%s\'' % (user.username, user.superuser, user.email))
+
+            ##users.add(User(username='bradf', password='ubuntu', superuser=True, email='brad@foo.com'))
+
+            tags = mc.tags
 
             print('')
-            print('no. of users: %d' % len(users))
+            print('no. of tags: %d' % len(tags))
 
             print('')
-            for user in users:
-                print('username: %-24s    admin: %5s    email: \'%s\'' % (user.username, user.superuser, user.email))
+            for tag in tags:
+                print('name: %-24s    comment: %5s    definition: \'%s\'' % (tag.name, tag.comment, tag.definition))
 
-            #users.add(User(username='bradf', password='ubuntu', superuser=True, email='brad@foo.com'))
+            tags.add(Tag(name='intel-gpu', comment='Machines which have an Intel display driver', definition='contains(//node[@id="display"]/vendor, "Intel")'))
 
+            print('')
+            for tag in tags:
+                print('name: %-24s    comment: %5s    definition: \'%s\'' % (tag.name, tag.comment, tag.definition))
             retval = 0
 
         except MapiError as e:
