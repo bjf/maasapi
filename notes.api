@@ -1,0 +1,60 @@
+  API                       | Implementation | Documentation | Tests
+----------------------------+----------------+---------------+-------------------------------------------------
+- Logged-in user            |      None      |               |
+- bcache cache set          |      None      |               |
+- bcache cache sets         |      None      |               |
+- bcache device             |      None      |               |
+- bcache devices            |      None      |               |
+- block device              |      None      |               |
+- block devices             |      None      |               |
+- boot images               |       P        |               |
+- boot resource             |       P        |               |
+- boot resources            |       P        |               |
+- boot source               |       P        |               |
+- boot sources              |       P        |               |
+- boot source selection     |       P        |               |
+- boot source selections    |       P        |               |
+- commissioning script      |      None      |               |
+- commissioning scripts     |      None      |               |
+- device                    |      None      |               |
+- devices                   |      None      |               |
+- events                    |      None      |               |
+- fabric                    |      None      |               |
+- fabrics                   |      None      |               |
+- file                      |      None      |               |
+- files                     |      None      |               |
+- ip addresses              |      None      |               |
+- license key               |      None      |               |
+- license keys              |      None      |               |
+- maas server               |       P        |               |
+- network                   |      None      |               |
+- networks                  |      None      |               |
+- nodegroup                 |       P        |               |
+- nodegroups                |       P        |               |
+- nodegroup interface       |      None      |               |
+- nodegroup interfaces      |      None      |               |
+- node                      |       P        |               |
+- nodes                     |       P        |               |
+- node interface            |      None      |               |
+- node interfaces           |      None      |               |
+- node mac address          |      None      |               |
+- node mac addresses        |      None      |               |
+- commissioning results     |      None      |               |
+- partition                 |      None      |               |
+- partitions                |      None      |               |
+- raid device               |      None      |               |
+- raid devices              |      None      |               |
+- ssh key                   |      None      |               |
+- ssh keys                  |      None      |               |
+- ssl key                   |      None      |               |
+- ssl keys                  |      None      |               |
+- tag                       |       P        |               |
+- tags                      |       P        |               |
+- users                     |       P        |               |
+- maas version              |      Full      |               |
+- vlan                      |      None      |               |
+- vlans                     |      None      |               |
+- volume group              |      None      |               |
+- volume groups             |      None      |               |
+- zone                      |      Full      |               |
+- zones                     |      Full      |               |

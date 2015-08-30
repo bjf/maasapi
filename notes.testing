@@ -1,0 +1,11 @@
+
+Ubuntu Trusty (nuc1)
+. Deployed (via MAAS) fresh install of Trusty on Intel Nuc
+. cp xmaas to target
+
+
+Ubuntu Wily (nuc2)
+. Deployed (via MAAS) fresh install of Wily on Intel Nuc
+
+
+

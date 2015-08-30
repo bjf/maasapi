@@ -1,0 +1,6 @@
+ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o LogLevel=quiet  ubuntu@10.0.3.98
+
+maas login ubuntu http://10.0.3.98/MAAS QemXGCH7arcnnzGgyc:ddf3urukCPy8YHGeuC:7jwuFaYYevVEfQD3jGbdQN4eheKFYG3D
+maas ubuntu node-group list-nodes b9bf8b14-d31d-43d1-8321-cb0884b730fc
+maas ubuntu node-group details b9bf8b14-d31d-43d1-8321-cb0884b730fc
+
