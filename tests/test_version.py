@@ -9,8 +9,8 @@ class VersionTestCase(MAASApiTestCase):
     def test_version(s):
         version = MapiClient(s.url, s.creds).version.version
 
-        m = re.match(r'\d+.\d+.\d+\+bzr\d+\-0ubuntu1', version)
-        s.assertIsNotNone(m)
+        m = re.match(r'\d+.\d+.\d+\+bzr\d+\-\d+ubuntu\d+', version)
+        s.assertIsNotNone(m, msg='%s does not match the regular expression' % version)
 
     def test_subversion(s):
         subversion = MapiClient(s.url, s.creds).version.subversion
@@ -19,7 +19,7 @@ class VersionTestCase(MAASApiTestCase):
     def test_capabilities(s):
         capabilities = MapiClient(s.url, s.creds).version.capabilities
 
-        s.assertEqual(len(capabilities), 3)
+        s.assertTrue(len(capabilities) >= 3, msg='capabilities: %s' % capabilities)
 
         caps = ['networks-management', 'static-ipaddresses', 'ipv6-deployment-ubuntu']
         for c in caps:
