@@ -72,3 +72,19 @@ class Tags(object):
         cleave(s.__class__.__name__)
         return response.data
 
+    # delete
+    #
+    def delete(s, tag):
+        center(s.__class__.__name__)
+        if type(tag) != Tag:
+            raise TypeError, "Object is of type %s but must be of type Tag." % type(tag)
+
+        response = s.__maas.delete(u'/tags/%s/' % tag.name)
+        if not response.ok:
+            if type(response.data) == str:
+                cleave(s.__class__.__name__)
+                raise MapiError(response.data)
+        s.__tags = None
+        cleave(s.__class__.__name__)
+        return response.data
+
