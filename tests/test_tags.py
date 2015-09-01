@@ -1,5 +1,4 @@
 
-import re
 import unittest
 from maasapi.client                     import MapiClient
 from maasapi.tag                        import Tag
