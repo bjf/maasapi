@@ -2,11 +2,10 @@
 #
 
 from log                                import center, cleave
-from mydict                             import MyDict
 
 # Zone
 #
-class Zone(MyDict):
+class Zone(object):
     '''
     '''
 
@@ -16,7 +15,21 @@ class Zone(MyDict):
         center(s.__class__.__name__)
         s.__maas = maas
 
-        dict.__init__(s, obj)
+        s.__name         = obj['name']
+        s.__description  = obj['description']
+        s.__resource_uri = obj['resource_uri']
 
         cleave(s.__class__.__name__)
+
+    @property
+    def name(s):
+        return s.__name
+
+    @property
+    def description(s):
+        return s.__description
+
+    @property
+    def resource_uri(s):
+        return s.__resource_uri
 
