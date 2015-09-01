@@ -4,7 +4,6 @@
 from log                                import center, cleave, cdebug
 from error                              import MapiError
 from zone                               import Zone
-from mydict                             import MyDict
 
 # Zones
 #
