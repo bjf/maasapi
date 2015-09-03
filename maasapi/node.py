@@ -113,33 +113,33 @@ class Node(MyDict):
         cleave(s.__class__.__name__)
         return response
 
+    def _op(s, uri, op=None, data=[]):
+        center(s.__class__.__name__)
+        response = s.__maas.post(uri, op=op, data=data)
+        retval = Node(s.__maas, response.data)
+        cleave(s.__class__.__name__)
+        return retval
+
     def mark_broken(s, description=None):
         center(s.__class__.__name__)
         data = []
         if description:
             data.append( ('description', description) )
-        try:
-            response = s.__maas.post(u'/nodes/%s/' % s['system_id'], op='mark_broken', data=data)
-            retval = Node(s.__maas, response.data)
-        except MaasApiHttpConflict as e:
-            raise MaasApiPowerResponseTimeout(e.status, e.message)
+        retval = s._op(u'/nodes/%s/' % s['system_id'], op='mark_broken', data=data)
         cleave(s.__class__.__name__)
         return retval
 
     def mark_fixed(s):
         center(s.__class__.__name__)
-        data = []
-        try:
-            response = s.__maas.post(u'/nodes/%s/' % s['system_id'], op='mark_fixed')
-            retval = Node(s.__maas, response.data)
-        except MaasApiHttpConflict as e:
-            raise MaasApiPowerResponseTimeout(e.status, e.message)
+        retval = s._op(u'/nodes/%s/' % s['system_id'], op='mark_fixed')
         cleave(s.__class__.__name__)
         return retval
 
     def release(s):
-        response = s.__maas.post(u'/nodes/%s/' % s['system_id'], op='release')
-        raise MaasApiNotImplemented()
+        center(s.__class__.__name__)
+        retval = s._op(u'/nodes/%s/' % s['system_id'], op='release')
+        cleave(s.__class__.__name__)
+        return retval
 
     def set_storage_layout(s):
         raise MaasApiNotImplemented()
