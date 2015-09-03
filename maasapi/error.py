@@ -45,7 +45,7 @@ class MaasApiUnknownError(MaasApiStandardException):
     # __init__
     #
     def __init__(s, status, msg):
-        super(MaasApiStandardException, s).__init__(status, msg)
+        MaasApiStandardException.__init__(s, status, msg)
 
 # MaasApiCertificateVerificationError
 #
@@ -56,7 +56,7 @@ class MaasApiCertificateVerificationError(MaasApiStandardException):
     # __init__
     #
     def __init__(s, status, msg):
-        super(MaasApiStandardException, s).__init__(status, msg)
+        MaasApiStandardException.__init__(s, status, msg)
 
 # MaasApiPowerResponseTimeout
 #
@@ -69,11 +69,11 @@ class MaasApiPowerResponseTimeout(MaasApiStandardException):
     # __init__
     #
     def __init__(s, status, msg):
-        super(MaasApiStandardException, s).__init__(status, msg)
+        super(MaasApiStandardException, s).__init__(s, status, msg)
 
-# MaasApiNodeStateSteady
+# MaasApiNodeStateReady
 #
-class MaasApiNodeStateSteady(MaasApiStandardException):
+class MaasApiNodeStateReady(MaasApiStandardException):
     '''
     A node abort failed. The node was in a Ready state, not performing any
     operation that could be aborted.
@@ -81,7 +81,7 @@ class MaasApiNodeStateSteady(MaasApiStandardException):
     # __init__
     #
     def __init__(s, status, msg):
-        super(MaasApiStandardException, s).__init__(status, msg)
+        MaasApiStandardException.__init__(s, status, msg)
 
 # MaasApiHttpServiceUnavailable
 #
@@ -92,7 +92,7 @@ class MaasApiHttpServiceUnavailable(MaasApiStandardException):
     # __init__
     #
     def __init__(s, status, msg):
-        super(MaasApiStandardException, s).__init__(status, msg)
+        MaasApiStandardException.__init__(s, status, msg)
 
 # MaasApiHttpConflict
 #
@@ -103,5 +103,5 @@ class MaasApiHttpConflict(MaasApiStandardException):
     # __init__
     #
     def __init__(s, status, msg):
-        super(MaasApiStandardException, s).__init__(status, msg)
+        MaasApiStandardException.__init__(s, status, msg)
 
