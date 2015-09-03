@@ -22,7 +22,14 @@ import json
 
 from log                                import center, cleave, cdebug, Clog
 from response                           import Response
-from error                              import MaasApiUnknownError, MaasApiCertificateVerificationError, MaasApiHttpServiceUnavailable, MaasApiHttpConflict
+from error                              import (
+                                                    MaasApiUnknownError,
+                                                    MaasApiCertificateVerificationError,
+                                                    MaasApiHttpInternalServerError,
+                                                    MaasApiHttpServiceUnavailable,
+                                                    MaasApiHttpConflict,
+                                                    MaasApiHttpBadRequest,
+                                               )
 
 #--------------------------------------------------------------------------------
 
@@ -165,8 +172,12 @@ class RestClient(object):
         # 2xx status codes are all okay.
         if response.status // 100 != 2:
             cleave('MaiClient.call')
-            if response.status == 503:
+            if response.status == 500:
+                raise MaasApiHttpInternalServerError(response.status, content)
+            elif response.status == 503:
                 raise MaasApiHttpServiceUnavailable(response.status, content)
+            elif response.status == 400:
+                raise MaasApiHttpBadRequest(response.status, content)
             elif response.status == 409:
                 raise MaasApiHttpConflict(response.status, content)
             else:
