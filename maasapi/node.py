@@ -42,6 +42,17 @@ class Node(MyDict):
         return retval
 
     @property
+    def power_parameters(s):
+        center(s.__class__.__name__)
+        try:
+            response = s.__maas.get(u'/nodes/%s/' % s['system_id'], op='power_parameters')
+            retval = response.data
+        except MaasApiHttpServiceUnavailable as e:
+            raise MaasApiPowerResponseTimeout(e.status, e.message)
+        cleave(s.__class__.__name__)
+        return retval
+
+    @property
     def details(s):
         center(s.__class__.__name__)
         response = s.__maas.get(u'/nodes/%s/' % s['system_id'], op='details')
