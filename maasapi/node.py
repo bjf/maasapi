@@ -8,6 +8,7 @@ from error                              import (
                                                  MaasApiPowerResponseTimeout,
                                                  MaasApiNotImplemented
                                                )
+from volume_groups                      import VolumeGroups
 
 # Node
 #
@@ -24,6 +25,10 @@ class Node(MyDict):
         dict.__init__(s, obj)
 
         cleave(s.__class__.__name__)
+
+    @property
+    def client(s):
+        return s.__maas
 
     @property
     def power_state(s):
@@ -74,3 +79,11 @@ class Node(MyDict):
     def stop(s, mode=None):
         response = s.__maas.post(u'/nodes/%s/' % s['system_id'], op='stop')
         raise MaasApiNotImplemented()
+
+    @property
+    def volume_groups(s):
+        return VolumeGroups(s, s['system_id'])
+
+    @volume_groups.setter
+    def volue_groups(s, vgroups):
+        pass
