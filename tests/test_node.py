@@ -4,7 +4,10 @@ from maasapi.client                     import MapiClient
 from maasapi.error                      import (
                                                     MaasApiUnknownError,
                                                     MaasApiNodeBadMACAddress,
+                                                    MaasApiNodeNotAcquired,
                                                     MaasApiNodeStateReady,
+                                                    MaasApiHttpConflict,
+                                                    MaasApiHttpInternalServerError,
                                                )
 from maasapi.node                       import Node
 from maasapi_test_case                  import MAASApiTestCase
@@ -48,8 +51,8 @@ class NodeTestCase(MAASApiTestCase):
             s.assertEqual(params['power_pass'], '1Pa**word')
             s.assertEqual(params['mac_address'], 'ec:a8:6b:fa:91:64')
 
-            # node.abort()
-            #
+            node.abort()
+
             try:
                 result = node.abort()
                 s.assertTrue(False, 'The node.abort() should have thrown an exception.')
@@ -87,7 +90,7 @@ class NodeTestCase(MAASApiTestCase):
             #
             try:
                 result = node.claim_sticky_ip_address(mac_address='12:34:56:78:ab:cd', requested_address='10.10.11.111')
-                s.assertTrue(False, 'Should have raise a MaasApiNodeBadMACAddress exception.')
+                s.assertTrue(False, 'Should have raised a MaasApiNodeBadMACAddress exception.')
             except MaasApiNodeBadMACAddress as e:
                 s.assertTrue(True)
 
@@ -102,6 +105,49 @@ class NodeTestCase(MAASApiTestCase):
             #  #
             #  result = node.release_sticky_ip_address()
             #  print(json.dumps(result, sort_keys=True, indent=4))
+
+            # node.acquire()
+            #
+            result = node.acquire()
+            s.assertIs(type(result), Node)
+            #print('acquire ______________________________')
+            #print(json.dumps(result, sort_keys=True, indent=4))
+
+            sleep(2)
+
+            # node.release()
+            #
+            result = node.release()
+            s.assertIs(type(result), Node)
+            #print('release ______________________________')
+            #print(json.dumps(result, sort_keys=True, indent=4))
+
+            # node.start()
+            #
+            try:
+                result = node.start()
+                s.assertTrue(False, 'Should have raised a MaasApiNodeNotAcquired exception.')
+            except MaasApiNodeNotAcquired as e:
+                s.assertTrue(True)
+            except MaasApiHttpInternalServerError as e:
+                print(e.status)
+                print(e.message)
+                s.assertTrue(False)
+
+            result = node.acquire()
+            s.assertIs(type(result), Node)
+
+            sleep(2)
+
+            try:
+                result = node.start()
+                s.assertIs(type(result), Node)
+            except MaasApiNodeNotAcquired as e:
+                s.assertTrue(True)
+            except MaasApiHttpInternalServerError as e:
+                print(e.status)
+                print(e.message)
+                s.assertTrue(False)
 
         except MaasApiUnknownError as e:
             print(e.status)

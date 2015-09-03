@@ -11,6 +11,8 @@ from error                              import (
                                                  MaasApiPowerResponseTimeout,
                                                  MaasApiNotImplemented,
                                                  MaasApiNodeStateReady,
+                                                 MaasApiNodeNotAcquired,
+                                                 MaasApiNodeAlreadyAcquired,
                                                  MaasApiNodeBadMACAddress,
                                                  MaasApiDHCPServerDisabled,
                                                )
@@ -157,6 +159,19 @@ class Node(MyDict):
         cleave(s.__class__.__name__)
         return retval
 
+    def acquire(s):
+        '''
+        '''
+        center(s.__class__.__name__)
+        data = []
+        data.append( ('name', s['hostname']) )
+        try:
+            retval = s._op(u'/nodes/', op='acquire', data=data)
+        except MaasApiHttpConflict as e:
+            raise MaasApiNodeAlreadyAcquired(e.status, e.message)
+        cleave(s.__class__.__name__)
+        return retval
+
     def release(s):
         center(s.__class__.__name__)
         retval = s._op(u'/nodes/%s/' % s['system_id'], op='release')
@@ -167,8 +182,22 @@ class Node(MyDict):
         raise MaasApiNotImplemented()
 
     def start(s, distro_series=None, hwe_kernel=None, user_data=None):
-        response = s.__maas.post(u'/nodes/%s/' % s['system_id'], op='start')
-        raise MaasApiNotImplemented()
+        '''
+        '''
+        center(s.__class__.__name__)
+        data = []
+        if distro_series:
+            data.append( ('distro_series', distro_series) )
+        if hwe_kernel:
+            data.append( ('hwe_kernel', hwe_kernel) )
+        if user_data:
+            data.append( ('user_data', user_data) )
+        try:
+            retval = s._op(u'/nodes/%s/' % s['system_id'], op='start', data=data)
+        except MaasApiHttpConflict as e:
+            raise MaasApiNodeNotAcquired(e.status, e.message)
+        cleave(s.__class__.__name__)
+        return retval
 
     def stop(s, mode=None):
         response = s.__maas.post(u'/nodes/%s/' % s['system_id'], op='stop')
