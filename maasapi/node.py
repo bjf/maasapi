@@ -6,9 +6,13 @@ from mydict                             import MyDict
 from error                              import (
                                                  MaasApiHttpServiceUnavailable,
                                                  MaasApiHttpConflict,
+                                                 MaasApiHttpBadRequest,
+                                                 MaasApiHttpInternalServerError,
                                                  MaasApiPowerResponseTimeout,
                                                  MaasApiNotImplemented,
                                                  MaasApiNodeStateReady,
+                                                 MaasApiNodeBadMACAddress,
+                                                 MaasApiDHCPServerDisabled,
                                                )
 from volume_groups                      import VolumeGroups
 
@@ -100,7 +104,7 @@ class Node(MyDict):
         response = s.__maas.post(u'/nodes/%s/' % s['system_id'], op='abort_operation')
         return response
 
-    def clain_sticky_ip_address(s, mac_address=None, requested_address=None):
+    def claim_sticky_ip_address(s, mac_address=None, requested_address=None):
         '''
         '''
         center(s.__class__.__name__)
@@ -109,9 +113,27 @@ class Node(MyDict):
             data.append( ('mac_address', mac_address) )
         if requested_address:
             data.append( ('requested_address', requested_address) )
-        response = s.__maas.post(u'/nodes/%s/' % s['system_id'], op='claim_sticky_ip_address', data=data)
+        try:
+            response = s.__maas.post(u'/nodes/%s/' % s['system_id'], op='claim_sticky_ip_address', data=data)
+            retval = response.data
+        except MaasApiHttpBadRequest as e:
+            raise MaasApiNodeBadMACAddress(e.status, e.message)
+        except MaasApiHttpInternalServerError as e:
+            raise MaasApiDHCPServerDisabled(e.status, e.message)
         cleave(s.__class__.__name__)
-        return response
+        return retval
+
+    def rlease_sticky_ip_address(s, address=None):
+        '''
+        '''
+        center(s.__class__.__name__)
+        data = []
+        if address:
+            data.append( ('address', address) )
+        response = s.__maas.post(u'/nodes/%s/' % s['system_id'], op='release_sticky_ip_address', data=data)
+        retval = response.data
+        cleave(s.__class__.__name__)
+        return retval
 
     def _op(s, uri, op=None, data=[]):
         center(s.__class__.__name__)
