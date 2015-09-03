@@ -9,6 +9,7 @@ from error                              import MapiError
 from nodegroups                         import Nodegroups
 from boot_resources                     import BootResources
 from boot_sources                       import BootSources
+from events                             import Events
 from nodes                              import Nodes
 from tags                               import Tags
 from users                              import Users
@@ -73,21 +74,30 @@ class MapiClient(RestClient):
     def nodes_allocated(s):
         return Nodes(s, op='list_allocated')
 
+    def events(s):
+        return Events(s)
+
+    def put(s, uri, op=None, data=[]):
+        center(s.__class__.__name__)
+        response = s.call(u'%s%s' % (s.root, uri), op=op, data=data, method='PUT', creds=s.creds)
+        cleave(s.__class__.__name__)
+        return response
+
     def post(s, uri, op=None, data=[]):
         center(s.__class__.__name__)
-        response = s.call(u'%s/%s' % (s.root, uri), op=op, data=data, method='POST', creds=s.creds)
+        response = s.call(u'%s%s' % (s.root, uri), op=op, data=data, method='POST', creds=s.creds)
         cleave(s.__class__.__name__)
         return response
 
     def get(s, uri, op=None, data=[]):
         center(s.__class__.__name__)
-        response = s.call(u'%s/%s' % (s.root, uri), op=op, data=data, method='GET', creds=s.creds)
+        response = s.call(u'%s%s' % (s.root, uri), op=op, data=data, method='GET', creds=s.creds)
         cleave(s.__class__.__name__)
         return response
 
     def delete(s, uri, op=None, data=[]):
         center(s.__class__.__name__)
-        response = s.call(u'%s/%s' % (s.root, uri), op=op, data=data, method='DELETE', creds=s.creds)
+        response = s.call(u'%s%s' % (s.root, uri), op=op, data=data, method='DELETE', creds=s.creds)
         cleave(s.__class__.__name__)
         return response
 
