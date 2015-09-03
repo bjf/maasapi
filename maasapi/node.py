@@ -96,23 +96,46 @@ class Node(MyDict):
     def abort_operation(s):
         '''
         '''
+        center(s.__class__.__name__)
         response = s.__maas.post(u'/nodes/%s/' % s['system_id'], op='abort_operation')
         return response
 
     def clain_sticky_ip_address(s, mac_address=None, requested_address=None):
         '''
         '''
+        center(s.__class__.__name__)
         data = []
         if mac_address:
             data.append( ('mac_address', mac_address) )
         if requested_address:
             data.append( ('requested_address', requested_address) )
         response = s.__maas.post(u'/nodes/%s/' % s['system_id'], op='claim_sticky_ip_address', data=data)
+        cleave(s.__class__.__name__)
         return response
 
     def mark_broken(s, description=None):
-        response = s.__maas.post(u'/nodes/%s/' % s['system_id'], op='mark_broken')
-        raise MaasApiNotImplemented()
+        center(s.__class__.__name__)
+        data = []
+        if description:
+            data.append( ('description', description) )
+        try:
+            response = s.__maas.post(u'/nodes/%s/' % s['system_id'], op='mark_broken', data=data)
+            retval = Node(s.__maas, response.data)
+        except MaasApiHttpConflict as e:
+            raise MaasApiPowerResponseTimeout(e.status, e.message)
+        cleave(s.__class__.__name__)
+        return retval
+
+    def mark_fixed(s):
+        center(s.__class__.__name__)
+        data = []
+        try:
+            response = s.__maas.post(u'/nodes/%s/' % s['system_id'], op='mark_fixed')
+            retval = Node(s.__maas, response.data)
+        except MaasApiHttpConflict as e:
+            raise MaasApiPowerResponseTimeout(e.status, e.message)
+        cleave(s.__class__.__name__)
+        return retval
 
     def release(s):
         response = s.__maas.post(u'/nodes/%s/' % s['system_id'], op='release')
