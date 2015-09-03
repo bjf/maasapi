@@ -4,12 +4,14 @@
 from argparse                           import ArgumentParser, RawDescriptionHelpFormatter
 from logging                            import basicConfig, DEBUG, WARNING
 import yaml
+from time                               import sleep
 
 from maasapi.log                        import Clog, center, cleave, cdebug
 from maasapi.client                     import MapiClient
-from maasapi.error                      import MapiError, MaasApiPowerResponseTimeout
+from maasapi.error                      import MapiError, MaasApiPowerResponseTimeout, MaasApiUnknownError
 from maasapi.user                       import User
 from maasapi.tag                        import Tag
+import json
 
 # App
 #
@@ -52,10 +54,10 @@ class App():
         try:
             mc = MapiClient(s.url, s.creds)
 
-            v = mc.version
-            print('     version: %s' % v.version)
-            print('  subversion: %s' % v.subversion)
-            print('capabilities: %s' % ', '.join(v.capabilities))
+            #v = mc.version
+            #print('     version: %s' % v.version)
+            #print('  subversion: %s' % v.subversion)
+            #print('capabilities: %s' % ', '.join(v.capabilities))
 
             #   cdebug('nodes -----------------------------------------------------------', 'yellow')
 
@@ -124,22 +126,70 @@ class App():
 
             tags = mc.tags
 
-            print('')
-            print('no. of tags: %d' % len(tags))
+            #print('')
+            #print('no. of tags: %d' % len(tags))
 
             print('')
             for tag in tags:
                 print('name: %-24s    comment: %5s    definition: \'%s\'' % (tag.name, tag.comment, tag.definition))
+                tags.delete(tag)
 
-            tags.add(Tag(name='intel-gpu', comment='Machines which have an Intel display driver', definition='contains(//node[@id="display"]/vendor, "Intel")'))
+            #cdebug('add intel_gpu ---------------------------------------------------', 'yellow')
+            #tags.add(Tag(client=mc, name='intel_gpu', comment='Machines which have an Intel display driver', definition='//node[@id="display"]/vendor = "Intel Corporation"'))
+            #cdebug('add intel_cpu ---------------------------------------------------', 'yellow')
+            #tags.add(Tag(client=mc, name='intel_cpu', comment='', definition='//node[@class="processor"]/vendor = "Intel Corp."'))
 
-            print('')
-            for tag in tags:
-                print('name: %-24s    comment: %5s    definition: \'%s\'' % (tag.name, tag.comment, tag.definition))
+            #sleep(1)
+
+            #cdebug('get new tag -----------------------------------------------------', 'yellow')
+            #tag = tags[1]
+            #nodes = tag.nodes
+            #print(len(nodes))
+            #for n in nodes:
+            #    n.dump()
+
+            #print('')
+            #for tag in tags:
+            #    print('name: %-24s    comment: %5s    definition: \'%s\'' % (tag.name, tag.comment, tag.definition))
+
+            ## Test adding and removing nodes from a tag.
+            ##
+            #tags = mc.tags
+            #tag = tags[0]
+            #nodes = tag.nodes
+            #print(tag.name)
+            #for n in nodes:
+            #    print(n['system_id'])
+            #s.assertEqual(len(nodes), 2)
+            #tag.remove_nodes(nodes[0]['system_id'])
+            #sleep(1)            # Hack
+            #print('')
+            #tags = mc.tags
+            #tag = tags[0]
+            #print(tag.name)
+            #nodes = tag.nodes
+            #for n in nodes:
+            #    print(n['system_id'])
+            #s.assertEqual(len(nodes), 1)
+
+            #nodes = mc.nodes
+            #node = nodes[0]
+            #vgs = node.volume_groups
+            #for vg in vgs:
+            #    print(json.dumps(vg, sort_keys=True, indent=4))
+
+            nodes = mc.nodes
+            node  = nodes[0]
+            node.abort()
+
             retval = 0
 
         except MapiError as e:
             print(e.reason)
+
+        except MaasApiUnknownError as e:
+            print(e.status)
+            print(e.message)
 
         # Handle the user presses <ctrl-C>.
         #
