@@ -49,12 +49,12 @@
 - ssl key                   |      None      |               |
 - ssl keys                  |      None      |               |
 - tag                       |       P        |               |
-- tags                      |       P        |               |
-- users                     |       P        |               |
-- maas version              |      Full      |               |
+- tags                      |      Full      |               | Full
+- users                     |      Full      |               | Full
+- maas version              |      Full      |               | Full
 - vlan                      |      None      |               |
 - vlans                     |      None      |               |
 - volume group              |      None      |               |
 - volume groups             |      None      |               |
-- zone                      |      Full      |               |
-- zones                     |      Full      |               |
+- zone                      |      Full      |               | Full
+- zones                     |      Full      |               | Full
