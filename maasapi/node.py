@@ -68,8 +68,20 @@ class Node(MyDict):
             response = s.__maas.post(u'/nodes/%s/' % s['system_id'], op='abort_operation')
             retval = response.data
         except MaasApiHttpConflict as e:
+            raise MaasApiNodeStateReady(e.status, e.message)
+        cleave(s.__class__.__name__)
+
+    def commission(s):
+        '''
+        '''
+        center(s.__class__.__name__)
+        try:
+            response = s.__maas.post(u'/nodes/%s/' % s['system_id'], op='commission')
+            retval = Node(s.__maas, response.data)
+        except MaasApiHttpConflict as e:
             raise MaasApiPowerResponseTimeout(e.status, e.message)
         cleave(s.__class__.__name__)
+        return retval
 
     @property
     def details(s):
@@ -97,10 +109,6 @@ class Node(MyDict):
             data.append( ('requested_address', requested_address) )
         response = s.__maas.post(u'/nodes/%s/' % s['system_id'], op='claim_sticky_ip_address', data=data)
         return response
-
-    def commission(s):
-        response = s.__maas.post(u'/nodes/%s/' % s['system_id'], op='commission')
-        raise MaasApiNotImplemented()
 
     def mark_broken(s, description=None):
         response = s.__maas.post(u'/nodes/%s/' % s['system_id'], op='mark_broken')
