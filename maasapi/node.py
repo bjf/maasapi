@@ -5,8 +5,10 @@ from log                                import center, cleave
 from mydict                             import MyDict
 from error                              import (
                                                  MaasApiHttpServiceUnavailable,
+                                                 MaasApiHttpConflict,
                                                  MaasApiPowerResponseTimeout,
-                                                 MaasApiNotImplemented
+                                                 MaasApiNotImplemented,
+                                                 MaasApiNodeStateReady,
                                                )
 from volume_groups                      import VolumeGroups
 
@@ -28,10 +30,14 @@ class Node(MyDict):
 
     @property
     def client(s):
+        '''
+        '''
         return s.__maas
 
     @property
     def power_state(s):
+        '''
+        '''
         center(s.__class__.__name__)
         try:
             response = s.__maas.get(u'/nodes/%s/' % s['system_id'], op='query_power_state')
@@ -43,6 +49,8 @@ class Node(MyDict):
 
     @property
     def power_parameters(s):
+        '''
+        '''
         center(s.__class__.__name__)
         try:
             response = s.__maas.get(u'/nodes/%s/' % s['system_id'], op='power_parameters')
@@ -52,8 +60,21 @@ class Node(MyDict):
         cleave(s.__class__.__name__)
         return retval
 
+    def abort(s):
+        '''
+        '''
+        center(s.__class__.__name__)
+        try:
+            response = s.__maas.post(u'/nodes/%s/' % s['system_id'], op='abort_operation')
+            retval = response.data
+        except MaasApiHttpConflict as e:
+            raise MaasApiPowerResponseTimeout(e.status, e.message)
+        cleave(s.__class__.__name__)
+
     @property
     def details(s):
+        '''
+        '''
         center(s.__class__.__name__)
         response = s.__maas.get(u'/nodes/%s/' % s['system_id'], op='details')
         retval = response.data
@@ -61,12 +82,21 @@ class Node(MyDict):
         return retval
 
     def abort_operation(s):
+        '''
+        '''
         response = s.__maas.post(u'/nodes/%s/' % s['system_id'], op='abort_operation')
-        raise MaasApiNotImplemented()
+        return response
 
-    def clain_sticky_ip_address(s, mac_address, requested_address):
-        response = s.__maas.post(u'/nodes/%s/' % s['system_id'], op='claim_sticky_ip_address')
-        raise MaasApiNotImplemented()
+    def clain_sticky_ip_address(s, mac_address=None, requested_address=None):
+        '''
+        '''
+        data = []
+        if mac_address:
+            data.append( ('mac_address', mac_address) )
+        if requested_address:
+            data.append( ('requested_address', requested_address) )
+        response = s.__maas.post(u'/nodes/%s/' % s['system_id'], op='claim_sticky_ip_address', data=data)
+        return response
 
     def commission(s):
         response = s.__maas.post(u'/nodes/%s/' % s['system_id'], op='commission')
