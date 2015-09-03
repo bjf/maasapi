@@ -94,6 +94,28 @@ class MaasApiNodeBadMACAddress(MaasApiStandardException):
     def __init__(s, status, msg):
         MaasApiStandardException.__init__(s, status, msg)
 
+# MaasApiNodeNotAcquired
+#
+class MaasApiNodeNotAcquired(MaasApiStandardException):
+    '''
+    Before starting a node it must first be allocated.
+    '''
+    # __init__
+    #
+    def __init__(s, status, msg):
+        MaasApiStandardException.__init__(s, status, msg)
+
+# MaasApiNodeAlreadyAcquired
+#
+class MaasApiNodeAlreadyAcquired(MaasApiStandardException):
+    '''
+    The node as already been acquired.
+    '''
+    # __init__
+    #
+    def __init__(s, status, msg):
+        MaasApiStandardException.__init__(s, status, msg)
+
 # MaasApiDHCPServerDisabled
 #
 class MaasApiDHCPServerDisabled(MaasApiStandardException):
