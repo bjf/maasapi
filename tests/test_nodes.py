@@ -19,8 +19,15 @@ class NodesTestCase(MAASApiTestCase):
 
         for node in nodes:
             s.assertIsNotNone(node)
-            print(json.dumps(node, sort_keys=True, indent=4))
 
+        result = nodes.deployment_status([nodes[0]['system_id'], nodes[1]['system_id']])
+        s.assertIs(type(result), dict)
+        s.assertEqual(len(result), 2, msg='Expected 2 nodes but found %d instead.' % len(nodes))
+        s.assertTrue(nodes[0]['system_id'] in result)
+        s.assertTrue(nodes[1]['system_id'] in result)
+        s.assertTrue(result[nodes[0]['system_id']] in ['Deployed', 'Not in deployment'])
+        s.assertTrue(result[nodes[1]['system_id']] in ['Deployed', 'Not in deployment'])
+        print(json.dumps(result, sort_keys=True, indent=4))
 
 if __name__ == '__main__':
     unittest.main()

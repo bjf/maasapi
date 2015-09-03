@@ -60,3 +60,18 @@ class Nodes(object):
             cdebug('    fetched')
         cleave(s.__class__.__name__)
 
+    # deployment_status()
+    #
+    def deployment_status(s, node_ids):
+        center(s.__class__.__name__)
+        data = []
+        for n in node_ids:
+            data.append(('nodes', n))
+        response = s.__maas.get(u'/nodes/', op='deployment_status', data=data)
+        if not response.ok:
+            if type(response.data) == str:
+                cleave(s.__class__.__name__)
+                raise MapiError(response.data)
+        s.__tags = None
+        cleave(s.__class__.__name__)
+        return response.data
