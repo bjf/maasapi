@@ -27,7 +27,7 @@ class Tags(object):
     def __getitem__(s, index):
         center(s.__class__.__name__)
         s.__fetch_if_needed()
-        retval = Tag().load_dict(s.__tags[index])
+        retval = Tag(client=s.__maas).load_dict(s.__tags[index])
         cleave(s.__class__.__name__)
         return retval
 
@@ -37,7 +37,7 @@ class Tags(object):
         center(s.__class__.__name__)
         s.__fetch_if_needed()
         for item in s.__tags:
-            n = Tag().load_dict(item)
+            n = Tag(client=s.__maas).load_dict(item)
             yield n
         cleave(s.__class__.__name__)
 
