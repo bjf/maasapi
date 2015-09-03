@@ -83,6 +83,28 @@ class MaasApiNodeStateReady(MaasApiStandardException):
     def __init__(s, status, msg):
         MaasApiStandardException.__init__(s, status, msg)
 
+# MaasApiNodeBadMACAddress
+#
+class MaasApiNodeBadMACAddress(MaasApiStandardException):
+    '''
+    The node does not have the specified MAC address.
+    '''
+    # __init__
+    #
+    def __init__(s, status, msg):
+        MaasApiStandardException.__init__(s, status, msg)
+
+# MaasApiDHCPServerDisabled
+#
+class MaasApiDHCPServerDisabled(MaasApiStandardException):
+    '''
+    MAAS does not control the DHCP server.
+    '''
+    # __init__
+    #
+    def __init__(s, status, msg):
+        MaasApiStandardException.__init__(s, status, msg)
+
 # MaasApiHttpServiceUnavailable
 #
 class MaasApiHttpServiceUnavailable(MaasApiStandardException):
@@ -99,6 +121,28 @@ class MaasApiHttpServiceUnavailable(MaasApiStandardException):
 class MaasApiHttpConflict(MaasApiStandardException):
     '''
     While communicating with the MAAS rest interface we got back an HTTP 409.
+    '''
+    # __init__
+    #
+    def __init__(s, status, msg):
+        MaasApiStandardException.__init__(s, status, msg)
+
+# MaasApiHttpBadRequest
+#
+class MaasApiHttpBadRequest(MaasApiStandardException):
+    '''
+    While communicating with the MAAS rest interface we got back an HTTP 400.
+    '''
+    # __init__
+    #
+    def __init__(s, status, msg):
+        MaasApiStandardException.__init__(s, status, msg)
+
+# MaasApiHttpInternalServerError
+#
+class MaasApiHttpInternalServerError(MaasApiStandardException):
+    '''
+    While communicating with the MAAS rest interface we got back an HTTP 400.
     '''
     # __init__
     #
