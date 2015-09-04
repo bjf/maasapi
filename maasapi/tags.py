@@ -56,14 +56,20 @@ class Tags(object):
             cdebug('    fetched')
         cleave(s.__class__.__name__)
 
-    # add
+    # new
     #
-    def add(s, tag):
+    def new(s, name, comment=None, definition=None, kernel_opts=None):
         center(s.__class__.__name__)
-        if type(tag) != Tag:
-            raise TypeError, "Object is of type %s but must be of type Tag." % type(tag)
+        data = []
+        data.append(('name', name))
+        if comment:
+            data.append(('comment', comment))
+        if definition:
+            data.append(('definition', definition))
+        if kernel_opts:
+            data.append(('kernel_opts', kernel_opts))
 
-        response = s.__maas.post(u'/tags/', op='new', data=tag.to_rest_data())
+        response = s.__maas.post(u'/tags/', op='new', data=data)
         if not response.ok:
             if type(response.data) == str:
                 cleave(s.__class__.__name__)
