@@ -35,6 +35,16 @@ class Tag(object):
     def nodes(s):
         return Nodes(s.__maas, uri=u'/tags/%s/' % s.name, op='nodes')
 
+    def delete(s):
+        center(s.__class__.__name__)
+        response = s.__maas.delete(u'/tags/%s/' % s.name, op='delete')
+        if not response.ok:
+            if type(response.data) == str:
+                cleave(s.__class__.__name__)
+                raise MapiError(response.data)
+        cleave(s.__class__.__name__)
+        return response.data
+
     def rebuild(s):
         center(s.__class__.__name__)
         response = s.__maas.post(u'/tags/%s/' % s.name, op='rebuild')
@@ -61,13 +71,14 @@ class Tag(object):
 
     def add_nodes(s, system_ids=[], description=None, nodegroup=None):
         center(s.__class__.__name__)
-        utag_data = []
-        utag_data.append(('add', ','.join(system_ids)))
+        data = []
+        for node in system_ids:
+            data.append(('add', node))
         if description:
-            utag_data.append(('description', description))
+            data.append(('description', description))
         if nodegroup:
-            utag_data.append(('nodegroup', nodegroup))
-        response = s.__maas.post(u'/tags/%s/' % s.name, op='update_nodes', data=utag_data)
+            data.append(('nodegroup', nodegroup))
+        response = s.__maas.post(u'/tags/%s/' % s.name, op='update_nodes', data=data)
         if not response.ok:
             if type(response.data) == str:
                 cleave(s.__class__.__name__)
@@ -78,13 +89,14 @@ class Tag(object):
 
     def remove_nodes(s, system_ids=[], description=None, nodegroup=None):
         center(s.__class__.__name__)
-        utag_data = []
-        utag_data.append(('remove', ','.join(system_ids)))
+        data = []
+        for node in system_ids:
+            data.append(('add', node))
         if description:
-            utag_data.append(('description', description))
+            data.append(('description', description))
         if nodegroup:
-            utag_data.append(('nodegroup', nodegroup))
-        response = s.__maas.post(u'/tags/%s/' % s.name, op='update_nodes', data=utag_data)
+            data.append(('nodegroup', nodegroup))
+        response = s.__maas.post(u'/tags/%s/' % s.name, op='update_nodes', data=data)
         if not response.ok:
             if type(response.data) == str:
                 cleave(s.__class__.__name__)
