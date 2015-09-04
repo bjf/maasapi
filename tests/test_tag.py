@@ -22,8 +22,10 @@ class TagTestCase(MAASApiTestCase):
 
         # Add two tags and verify we can get them back.
         #
-        tags.add(Tag(client=mc, name='intel-gpu', comment='Intel GPUs', definition='//node[@id="display"]/vendor = "Intel Corporation"'))
-        tags.add(Tag(client=mc, name='intel-cpu', comment='Intel CPUs', definition='//node[@class="processor"]/vendor = "Intel Corp."'))
+        tags.new(name='intel-gpu', comment='Intel GPUs', definition='//node[@id="display"]/vendor = "Intel Corporation"')
+        tags.new(name='intel-cpu', comment='Intel CPUs', definition='//node[@class="processor"]/vendor = "Intel Corp."')
+        tags.new(name='tester',    comment='Simple tag')
+        tags.new(name='badger')
         sleep(1)            # Hack
 
         s.assertEqual(len(tags), 2)
@@ -66,16 +68,13 @@ class TagTestCase(MAASApiTestCase):
         tags = mc.tags
         tag = tags[0]
         nodes = tag.nodes
-        print(tag.name)
-        for n in nodes:
-            print(n['system_id'])
         s.assertEqual(len(nodes), 2)
-        tag.remove_nodes(nodes[0]['system_id'])
+        tag.remove_nodes([nodes[0]['system_id']])
+
         sleep(1)            # Hack
-        print('')
+
         tags = mc.tags
         tag = tags[0]
-        print(tag.name)
         nodes = tag.nodes
         for n in nodes:
             print(n['system_id'])
