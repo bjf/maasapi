@@ -3,6 +3,7 @@ import unittest
 from maasapi.client                     import MapiClient
 from maasapi_test_case                  import MAASApiTestCase
 import json
+from maasapi.nodes                      import Nodes
 
 class NodesTestCase(MAASApiTestCase):
 
@@ -27,9 +28,33 @@ class NodesTestCase(MAASApiTestCase):
         s.assertTrue(nodes[1]['system_id'] in result)
         s.assertTrue(result[nodes[0]['system_id']] in ['Deployed', 'Not in deployment'])
         s.assertTrue(result[nodes[1]['system_id']] in ['Deployed', 'Not in deployment'])
+
+        nodes[0].acquire()
+        nodes[1].acquire()
+        allocated = nodes.list_allocated()
+        s.assertIs(type(allocated), Nodes)
+        s.assertEqual(len(allocated), 2, msg='Expected 2 nodes but found %d instead.' % len(nodes))
+
+        nodes[0].release()
+        nodes[1].release()
+
+        params = nodes.power_parameters()
+        s.assertTrue(len(params) > 0)
+
+        result = nodes.accept([nodes[0]['system_id'], nodes[1]['system_id']])
+
+        nodes[0].release()
+        nodes[1].release()
+
+        result = nodes.accept_all()
+
+        nodes[0].release()
+        nodes[1].release()
+
+        result = nodes.check_commissioning()
         print(json.dumps(result, sort_keys=True, indent=4))
 
 if __name__ == '__main__':
     unittest.main()
-    #suite = unittest.TestLoader().loadTestsFromTestCase(TagsTestCase)
+    #suite = unittest.TestLoader().loadTestsFromTestCase(NodesTestCase)
     #unittest.TextTestRunner(verbosity=2).run(suite)
